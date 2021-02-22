@@ -1,0 +1,11 @@
+[report]
+show_missing = True
+include =
+    syto_api/*
+omit =
+    syto_api/migrations/*
+    syto_api/apps.py
+exclude_lines =
+    @abstractmethod
+    def __repr__
+    def __str__
