@@ -69,6 +69,9 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = "syto_api.User"
+
+
 WSGI_APPLICATION = "syto.wsgi.application"
 
 
