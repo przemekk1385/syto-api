@@ -13,6 +13,9 @@ class MyUserManage(BaseUserManager):
         birth_date,
         password=None,
     ):
+        # I'd remove all ValueErrors, except for email,
+        # validation is performed by serializer, english error messages see line 92+
+
         if not email:
             raise ValueError("Użytkownik musi mieć email")
         if not first_name:
@@ -57,9 +60,18 @@ class MyUserManage(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+
+    # compare fields definitions with AbstractUser model from django.contrib.auth.models
+    # IMO defs like first_, last_name etc. should be the same, verbose names should be
+    # translatable - see line 92+
+
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
+
+    # do we need this?
+
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
+
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -75,6 +87,16 @@ class User(AbstractBaseUser):
     STATIONARY_WORKER = 1
     HOME_WORKER = 2
 
+    # I'd prefer to use english only with possibility of translation, eg.
+    #
+    # from django.utils.translation import gettext_lazy as _
+    # ...
+    # ROLE_CHOICE = (
+    #     (STATIONARY, _("stationary")),
+    #     (HOME, _("cottage")),
+    #     (STAFF, _("staff")),
+    # )
+
     ROLE_CHOICE = (
         (STATIONARY_WORKER, "Pracownik stacjonarny"),
         (HOME_WORKER, "Pracownik chałupniczy"),
@@ -85,6 +107,10 @@ class User(AbstractBaseUser):
     object = MyUserManage()
 
     USERNAME_FIELD = "email"
+
+    # as far as I know belows are used only when creating superuser using manage.py
+    # can be empty IMO
+
     REQUIRED_FIELDS = [
         "first_name",
         "last_name",
@@ -95,6 +121,8 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email + " " + self.first_name
+
+    # for now it not needed
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
