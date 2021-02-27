@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class MyUserManage(BaseUserManager):
@@ -18,16 +19,6 @@ class MyUserManage(BaseUserManager):
 
         if not email:
             raise ValueError("Użytkownik musi mieć email")
-        if not first_name:
-            raise ValueError("Użytkownik musi podać imię")
-        if not last_name:
-            raise ValueError("Użytkownik musi podać nazwisko")
-        if not is_new:
-            raise ValueError("Użytkownik musi zaznaczyć")
-        if not evidence_number:
-            raise ValueError("Użytkownik musi podać numer pesel")
-        if not birth_date:
-            raise ValueError("Użytkownik musi podać date urodzenia")
 
         user = self.create_user(
             email=self.normalize_email(email),
@@ -69,6 +60,9 @@ class User(AbstractBaseUser):
 
     # do we need this?
 
+    # I thought it could be useful when we will want to create page with
+    # some information about new user. For example how many of them increased in particular month
+
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
 
@@ -79,27 +73,20 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     is_new = models.BooleanField(default=False)
-    evidence_number = models.IntegerField(max_length=11)
+    evidence_number = models.IntegerField(blank=True, null=True)
     birth_date = models.DateField(
-        auto_created=False, auto_now=False, auto_now_add=False
+        auto_created=False, auto_now=False, auto_now_add=False, blank=True, null=True
     )
 
-    STATIONARY_WORKER = 1
-    HOME_WORKER = 2
+    STATIONARY = 1
+    HOME = 2
+    STAFF = 3
 
     # I'd prefer to use english only with possibility of translation, eg.
-    #
-    # from django.utils.translation import gettext_lazy as _
-    # ...
-    # ROLE_CHOICE = (
-    #     (STATIONARY, _("stationary")),
-    #     (HOME, _("cottage")),
-    #     (STAFF, _("staff")),
-    # )
-
     ROLE_CHOICE = (
-        (STATIONARY_WORKER, "Pracownik stacjonarny"),
-        (HOME_WORKER, "Pracownik chałupniczy"),
+        (STATIONARY, _("stationary")),
+        (HOME, _("cottage")),
+        (STAFF, _("staff")),
     )
 
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICE, blank=True)
@@ -111,21 +98,9 @@ class User(AbstractBaseUser):
     # as far as I know belows are used only when creating superuser using manage.py
     # can be empty IMO
 
-    REQUIRED_FIELDS = [
-        "first_name",
-        "last_name",
-        "is_new",
-        "evidence_number",
-        "birth_date",
-    ]
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email + " " + self.first_name
 
     # for now it not needed
-
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return True

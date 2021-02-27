@@ -5,6 +5,9 @@ from syto_api.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    evidence_number = serializers.IntegerField(required=False)
+    birth_date = serializers.DateField(required=False)
+
     class Meta:
         model = User
         fields = [
@@ -17,20 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        email = data.get("email", None)
-        first_name = data.get("first_name", None)
-        last_name = data.get("last_name", None)
-        is_new = data.get("is_new", None)
-        evidence_number = data.get("evidence_number", None)
-        birth_date = data.get("birth_date", None)
-
-        if (
-            not email
-            or first_name
-            or last_name
-            or is_new
-            or evidence_number
-            or birth_date
-        ):
-            raise ValidationError("Wszyskie pola muszą być wypełnione")
-        return data
+        if data["is_new"]:
+            data["evidence_number"] = self.initial_data["evidence_number"]
+            data["birth_date"] = self.initial_data["birth_date"]
+            return data
