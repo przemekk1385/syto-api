@@ -74,7 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
 
     def __repr__(self):
-        return "<{} groups=[{}]>".format(
+        return "<User email={} groups=[{}]>".format(
             self.email, ", ".join(self.groups.values_list("name", flat=True))
         )
 
@@ -98,9 +98,23 @@ class AvailabilityPeriod(models.Model):
     end = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __repr__(self):
+        return "<AvailabilityPeriod start={} end={}>".format(self.start, self.end)
+
+    def __str__(self):
+        return "{}-{}".format(
+            self.start.strftime("%Y-%m-%d %H:%M"), self.end.strftime("%H:%M")
+        )
+
 
 class AvailabilityHours(models.Model):
 
     day = models.DateField()
     hours = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __repr__(self):
+        return "<AvailabilityHours day={} hours={}>".format(self.day, self.hours)
+
+    def __str__(self):
+        return _("{}, {} hours").format(self.day, self.hours)
