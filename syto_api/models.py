@@ -4,6 +4,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django.db.models import ExpressionWrapper, F
 from django.utils.translation import gettext_lazy as _
 
 
@@ -79,3 +80,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class AvailabilityPeriodQuerySet(models.QuerySet):
+    def with_timedelta(self):
+        timedelta_expression = ExpressionWrapper(
+            F("end") - F("start"), output_field=models.DurationField()
+        )
+        return self.annotate(timedelta=timedelta_expression)
+
+
+class AvailabilityPeriod(models.Model):
+
+    objects = AvailabilityPeriodQuerySet.as_manager()
+
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class AvailabilityHours(models.Model):
+
+    day = models.DateField()
+    hours = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
