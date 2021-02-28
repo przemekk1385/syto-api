@@ -48,9 +48,9 @@ class UserSerializer(serializers.ModelSerializer):
         is_new = validated_data.pop("is_new", None)
         is_cottage = validated_data.pop("is_cottage", None)
 
-        new_employee, stationary_worker, cottage_worker = self._get_groups()
+        instance = super().create(validated_data)
 
-        instance = User.objects.create(**validated_data)
+        new_employee, stationary_worker, cottage_worker = self._get_groups()
 
         if is_new:
             instance.groups.add(new_employee)
