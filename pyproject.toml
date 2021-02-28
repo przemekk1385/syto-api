@@ -27,7 +27,6 @@ exclude = '''
 python = "^3.8"
 Django = "^3.1.7"
 djangorestframework = "^3.12.2"
-pendulum = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.7.0"
