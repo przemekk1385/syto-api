@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
@@ -10,16 +11,56 @@ class UserSerializer(serializers.ModelSerializer):
 
     first_name = serializers.CharField()
     last_name = serializers.CharField()
+    groups = serializers.SlugRelatedField("name", many=True, read_only=True)
 
     evidence_number = serializers.CharField(required=False)
     date_of_birth = serializers.DateField(required=False)
 
     # extra field that doesn't go to db
-    is_new = serializers.BooleanField(required=False)
+    is_new = serializers.BooleanField(required=False, write_only=True)
+    is_cottage = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "groups",
+            "evidence_number",
+            "date_of_birth",
+            "is_new",
+            "is_cottage",
+        ]
+
+    @staticmethod
+    def _get_groups():
+        return (
+            group
+            for group, _ in (
+                Group.objects.get_or_create(name=name)
+                for name in ("new_employee", "stationary_worker", "cottage_worker")
+            )
+        )
+
+    def create(self, validated_data):
+        is_new = validated_data.pop("is_new", None)
+        is_cottage = validated_data.pop("is_cottage", None)
+
+        new_employee, stationary_worker, cottage_worker = self._get_groups()
+
+        instance = User.objects.create(**validated_data)
+
+        if is_new:
+            instance.groups.add(new_employee)
+
+        if is_cottage:
+            instance.groups.add(cottage_worker)
+        else:
+            instance.groups.add(stationary_worker)
+
+        return instance
 
     def validate(self, attrs):
         if attrs.get("is_new"):
