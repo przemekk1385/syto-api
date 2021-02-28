@@ -8,12 +8,13 @@ from syto_api.serializers import UserSerializer
 @pytest.mark.django_db
 def test_valid_data_new_employee():
     data = {
-        "first_name": "foo",
-        "last_name": "bar",
-        "email": "foo@bar",
+        "email": "foo@bar.baz",
+        "password": "FooBarBaz123",
+        "first_name": "Foo",
+        "last_name": "Bar",
         "is_new": True,
-        "evidence_number": 123456,  # PESEL
-        "birth_date": date.today(),
+        "date_of_birth": date.today(),
+        "evidence_number": "11111111111",  # PESEL
     }
 
     serializer = UserSerializer(data=data)
@@ -24,10 +25,10 @@ def test_valid_data_new_employee():
 @pytest.mark.django_db
 def test_valid_data_old_employee():
     data = {
-        "first_name": "foo",
-        "last_name": "bar",
-        "email": "foo@bar",
-        "is_new": False,
+        "email": "foo@bar.baz",
+        "password": "FooBarBaz123",
+        "first_name": "Foo",
+        "last_name": "Bar",
     }
 
     serializer = UserSerializer(data=data)
@@ -38,10 +39,12 @@ def test_valid_data_old_employee():
 @pytest.mark.django_db
 def test_invalid_data_new_employee():
     data = {
-        "first_name": "foo",
-        "last_name": "bar",
-        "email": "foo@bar",
+        "email": "foo@bar.baz",
+        "password": "FooBarBaz123",
+        "first_name": "Foo",
+        "last_name": "Bar",
         "is_new": True,
+        "evidence_number": "11111111111",  # PESEL
     }
 
     serializer = UserSerializer(data=data)
@@ -52,8 +55,9 @@ def test_invalid_data_new_employee():
 @pytest.mark.django_db
 def test_invalid_data_old_employee():
     data = {
-        "email": "foo@bar",
-        "is_new": False,
+        "email": "foo@bar.baz",
+        "password": "FooBarBaz123",
+        "first_name": "Foo",
     }
 
     serializer = UserSerializer(data=data)

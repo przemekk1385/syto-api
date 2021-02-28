@@ -5,22 +5,39 @@ from syto_api.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    evidence_number = serializers.IntegerField(required=False)
-    birth_date = serializers.DateField(required=False)
+
+    id = serializers.IntegerField(read_only=True)
+
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
+    evidence_number = serializers.CharField(required=False)
+    date_of_birth = serializers.DateField(required=False)
+
+    # extra field that doesn't go to db
+    is_new = serializers.BooleanField(required=False)
 
     class Meta:
         model = User
-        fields = [
-            "email",
-            "first_name",
-            "last_name",
-            "is_new",
-            "evidence_number",
-            "birth_date",
-        ]
+        fields = "__all__"
 
-    def validate(self, data):
-        if data["is_new"]:
-            data["evidence_number"] = self.initial_data["evidence_number"]
-            data["birth_date"] = self.initial_data["birth_date"]
-            return data
+    def validate(self, attrs):
+        if attrs.get("is_new"):
+            errors = {}
+
+            evidence_number = self.initial_data.get("evidence_number")
+            if not evidence_number:
+                errors[
+                    "evidence_number"
+                ] = "This field is required when 'is_new' flag is True"
+
+            date_of_birth = self.initial_data.get("date_of_birth")
+            if not date_of_birth:
+                errors[
+                    "date_of_birth"
+                ] = "This field is required when 'is_new' flag is True"
+
+            if errors:
+                raise ValidationError(errors)
+
+        return attrs

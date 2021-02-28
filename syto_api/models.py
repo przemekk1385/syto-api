@@ -1,106 +1,81 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class MyUserManage(BaseUserManager):
+class UserManager(BaseUserManager):
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("Users must have an email address")
+
+        user = self.model(self.normalize_email(email), **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+
     def create_user(
         self,
         email,
-        first_name,
-        last_name,
-        is_new,
-        evidence_number,
-        birth_date,
         password=None,
+        **extra_fields,
     ):
-        # I'd remove all ValueErrors, except for email,
-        # validation is performed by serializer, english error messages see line 92+
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
 
-        if not email:
-            raise ValueError("Użytkownik musi mieć email")
+        return self._create_user(email, password, **extra_fields)
 
-        user = self.create_user(
-            email=self.normalize_email(email),
-            first_name=first_name,
-            last_name=last_name,
-            is_new=is_new,
-            evidence_number=evidence_number,
-            birth_date=birth_date,
-        )
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+    def create_superuser(
+        self,
+        email,
+        password=None,
+        **extra_fields,
+    ):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
 
-    def create_superuser(self, email, password):
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
 
-        user = self.create_user(
-            email,
-            password=password,
-            birth_date=None,
-            first_name=None,
-            last_name=None,
-            is_new=None,
-            evidence_number=None,
-        )
-        user.is_admin = True
-        user.is_superuser = (True,)
-        user.is_staff = True
-        user.save(using=self._db)
-        return user
+        return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
 
-    # compare fields definitions with AbstractUser model from django.contrib.auth.models
-    # IMO defs like first_, last_name etc. should be the same, verbose names should be
-    # translatable - see line 92+
-
-    email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-
-    # do we need this?
-
-    # I thought it could be useful when we will want to create page with
-    # some information about new user. For example how many of them increased in particular month
-
-    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
-
-    is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    is_new = models.BooleanField(default=False)
-    evidence_number = models.IntegerField(blank=True, null=True)
-    birth_date = models.DateField(
-        auto_created=False, auto_now=False, auto_now_add=False, blank=True, null=True
+    # based on django.contrib.auth.models.AbstractUser
+    first_name = models.CharField(_("first name"), max_length=150, null=True)
+    last_name = models.CharField(_("last name"), max_length=150, null=True)
+    email = models.EmailField(_("email address"), unique=True)
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can log into this admin site."),
+    )
+    is_active = models.BooleanField(
+        _("active"),
+        default=False,
+        help_text=_(
+            "Designates whether this user should be treated as active. "
+            "Unselect this instead of deleting accounts."
+        ),
     )
 
-    STATIONARY = 1
-    HOME = 2
-    STAFF = 3
+    # extra fields
+    date_of_birth = models.DateField(blank=True, null=True)
+    evidence_number = models.CharField(max_length=11, blank=True, null=True)
 
-    # I'd prefer to use english only with possibility of translation, eg.
-    ROLE_CHOICE = (
-        (STATIONARY, _("stationary")),
-        (HOME, _("cottage")),
-        (STAFF, _("staff")),
-    )
-
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICE, blank=True)
-
-    object = MyUserManage()
+    objects = UserManager()
 
     USERNAME_FIELD = "email"
 
-    # as far as I know belows are used only when creating superuser using manage.py
-    # can be empty IMO
-
-    REQUIRED_FIELDS = []
+    def __repr__(self):
+        return "<{} groups=[{}]>".format(
+            self.email, ", ".join(self.groups.values_list("name", flat=True))
+        )
 
     def __str__(self):
-        return self.email + " " + self.first_name
-
-    # for now it not needed
+        return self.email
