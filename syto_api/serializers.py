@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
 
 from .models import AvailabilityHours, AvailabilityPeriod
 
@@ -16,7 +16,7 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
     @staticmethod
     def validate_hours(val):
         if val > 24:
-            raise ValidationError("maximum allowed number of hours is 24")
+            raise ValidationError({"hours": "maximum allowed number of hours is 24"})
 
         return val
 
@@ -31,10 +31,15 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
         model = AvailabilityPeriod
 
     def validate(self, attrs):
+        errors = {}
+
         if attrs["start"].date() != attrs["end"].date():
-            raise ValidationError("start and end must by at the same day")
+            errors["non_field_errors"] = "start and end must by at the same day"
 
         if (attrs["end"] - attrs["start"]).seconds < 3600:
-            raise ValidationError("end must be at least 1 hour after start")
+            errors["end"] = "end must be at least 1 hour after start"
+
+        if errors:
+            raise ValidationError(errors)
 
         return attrs
