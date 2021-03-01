@@ -1,13 +1,16 @@
+from datetime import date
+
 import pytest
-from django.utils import timezone
 
 from syto_api.serializers import AvailabilityHoursSerializer
+
+TODAY = date.today()
 
 
 @pytest.mark.django_db
 def test_valid_data(syto_user):
     data = {
-        "day": timezone.datetime(2021, 1, 1, 6, 0, 0).date(),
+        "day": TODAY,
         "hours": 8,
         "user": syto_user("foo@bar.baz").id,
     }
@@ -18,13 +21,15 @@ def test_valid_data(syto_user):
 
 
 @pytest.mark.django_db
-def test_invalid_data(syto_user):
+def test_exceeded_maximum_number_of_hours(syto_user):
     data = {
-        "day": timezone.datetime(2021, 1, 1, 6, 0, 0).date(),
-        "hours": 25,
+        "day": TODAY,
+        "hours": 17,
         "user": syto_user("foo@bar.baz").id,
     }
 
     serializer = AvailabilityHoursSerializer(data=data)
+    serializer.is_valid()
 
-    assert not serializer.is_valid()
+    assert len(serializer.errors) == 1
+    assert serializer.errors["hours"][0] == "Maximum allowed number of hours is 16."

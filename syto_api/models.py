@@ -82,6 +82,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class AvailabilityHours(models.Model):
+
+    day = models.DateField()
+    hours = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __repr__(self):
+        return "<AvailabilityHours day={} hours={}>".format(self.day, self.hours)
+
+    def __str__(self):
+        return _("{}, {} hours").format(self.day, self.hours)
+
+
 class AvailabilityPeriodQuerySet(models.QuerySet):
     def with_timedelta(self):
         timedelta_expression = ExpressionWrapper(
@@ -105,16 +118,3 @@ class AvailabilityPeriod(models.Model):
         return "{}-{}".format(
             self.start.strftime("%Y-%m-%d %H:%M"), self.end.strftime("%H:%M")
         )
-
-
-class AvailabilityHours(models.Model):
-
-    day = models.DateField()
-    hours = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __repr__(self):
-        return "<AvailabilityHours day={} hours={}>".format(self.day, self.hours)
-
-    def __str__(self):
-        return _("{}, {} hours").format(self.day, self.hours)

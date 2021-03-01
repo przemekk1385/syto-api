@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
 
 from .models import AvailabilityHours, AvailabilityPeriod, User
 
@@ -68,18 +67,18 @@ class UserSerializer(serializers.ModelSerializer):
 
             evidence_number = self.initial_data.get("evidence_number")
             if not evidence_number:
-                errors[
-                    "evidence_number"
-                ] = "This field is required when 'is_new' flag is True"
+                errors["evidence_number"] = [
+                    "This field is required when 'is_new' flag is True."
+                ]
 
             date_of_birth = self.initial_data.get("date_of_birth")
             if not date_of_birth:
-                errors[
-                    "date_of_birth"
-                ] = "This field is required when 'is_new' flag is True"
+                errors["date_of_birth"] = [
+                    "This field is required when 'is_new' flag is True."
+                ]
 
             if errors:
-                raise ValidationError(errors)
+                raise serializers.ValidationError(errors)
 
         return attrs
 
@@ -95,8 +94,10 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def validate_hours(val):
-        if val > 24:
-            raise ValidationError({"hours": "maximum allowed number of hours is 24"})
+        if val > 16:
+            raise serializers.ValidationError(
+                ["Maximum allowed number of hours is 16."]
+            )
 
         return val
 
@@ -111,15 +112,18 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
         model = AvailabilityPeriod
 
     def validate(self, attrs):
-        errors = {}
+        errors = {"non_field_errors": []}
 
         if attrs["start"].date() != attrs["end"].date():
-            errors["non_field_errors"] = "start and end must by at the same day"
+            errors["non_field_errors"].append("Start and end must be at the same day.")
 
-        if (attrs["end"] - attrs["start"]).seconds < 3600:
-            errors["end"] = "end must be at least 1 hour after start"
+        if (attrs["end"] - attrs["start"]).seconds // 3600 > 16:
+            errors["non_field_errors"].append("Maximum allowed number of hours is 16.")
 
-        if errors:
-            raise ValidationError(errors)
+        if (attrs["end"] - attrs["start"]).seconds % 3600:
+            errors["non_field_errors"].append("Only full number of hours is allowed.")
+
+        if errors["non_field_errors"]:
+            raise serializers.ValidationError(errors)
 
         return attrs
