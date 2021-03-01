@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 
 import pytest
 from dateutil import tz
@@ -8,14 +8,17 @@ from django.utils import timezone
 from syto_api.models import AvailabilityPeriod
 
 tz = tz.gettz(settings.TIME_ZONE)
-CURRENT_TIME = timezone.datetime(2021, 1, 1, 6, 0, 0, tzinfo=tz)
+TODAY = date.today()
+START = timezone.datetime(TODAY.year, TODAY.month, TODAY.day, 6, 0, 0, tzinfo=tz)
 
 
 @pytest.mark.django_db
 def test_query_set(syto_user):
+    start = START
+    end = START + timedelta(hours=8)
     AvailabilityPeriod.objects.create(
-        start=CURRENT_TIME,
-        end=CURRENT_TIME + timedelta(hours=8),
+        start=start,
+        end=end,
         user=syto_user("foo@bar.baz"),
     )
 
