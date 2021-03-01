@@ -1,9 +1,9 @@
-from django.urls import include, path
+from django.urls import path
 
 from . import views
 from .apps import SytoApiConfig
 
 app_name = SytoApiConfig.name
 urlpatterns = [
-    path("availability", views.availability_list_view, name="availability-list"),
+    path("availability", views.AvailabilityView.as_view(), name="availability-list"),
 ]
