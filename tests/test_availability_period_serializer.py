@@ -29,8 +29,8 @@ def test_valid_data(syto_user):
 
 @pytest.mark.django_db
 def test_start_and_end_not_at_the_same_day(syto_user):
-    start = START + timedelta(hours=16)  # today at 22:00
-    end = start + timedelta(hours=8)  # tomorrow at 6:00
+    start = START + timedelta(hours=16)  # 22:00
+    end = start + timedelta(hours=8)  # 6:00, next day
     data = {
         "start": start,
         "end": end,
@@ -48,9 +48,26 @@ def test_start_and_end_not_at_the_same_day(syto_user):
 
 
 @pytest.mark.django_db
+def test_end_before_start(syto_user):
+    end = START  # 6:00
+    start = end + timedelta(hours=8)  # 14:00
+    data = {
+        "start": start,
+        "end": end,
+        "user": syto_user("foo@bar.baz").id,
+    }
+
+    serializer = AvailabilityPeriodSerializer(data=data)
+    serializer.is_valid()
+
+    assert len(serializer.errors) == 1
+    assert serializer.errors["non_field_errors"][0] == "End must be after start."
+
+
+@pytest.mark.django_db
 def test_exceeded_maximum_number_of_hours(syto_user):
-    start = START
-    end = start + timedelta(hours=17)
+    start = START  # 6:00
+    end = start + timedelta(hours=17)  # 23:00
     data = {
         "start": start,
         "end": end,
@@ -69,8 +86,8 @@ def test_exceeded_maximum_number_of_hours(syto_user):
 
 @pytest.mark.django_db
 def test_not_full_number_of_hours(syto_user):
-    start = START
-    end = start + timedelta(minutes=450)  # 7 hours 30 minutes
+    start = START  # 6:00
+    end = start + timedelta(minutes=450)  # 13:30; 405 minutes = 7 hours 30 minutes
     data = {
         "start": start,
         "end": end,
