@@ -112,12 +112,20 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
         model = AvailabilityPeriod
 
     def validate(self, attrs):
+        if self.instance:
+            attrs.setdefault("start", self.instance.start)
+            attrs.setdefault("end", self.instance.end)
+
         errors = {"non_field_errors": []}
 
         if attrs["start"].date() != attrs["end"].date():
             errors["non_field_errors"].append("Start and end must be at the same day.")
 
-        if (attrs["end"] - attrs["start"]).seconds // 3600 > 16:
+        if attrs["start"] >= attrs["end"]:
+            errors["non_field_errors"].append("End must be after start.")
+
+        td = attrs["end"] - attrs["start"]
+        if td.days >= 0 and td.seconds // 3600 > 16:
             errors["non_field_errors"].append("Maximum allowed number of hours is 16.")
 
         if (attrs["end"] - attrs["start"]).seconds % 3600:
