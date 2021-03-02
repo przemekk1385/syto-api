@@ -46,7 +46,10 @@ class AvailabilityView(APIView):
 
         return Response(
             data={
-                "hours": hours_a_day,
+                "hours": [
+                    {"day": day.strftime("%Y-%m-%d"), "hours": hours}
+                    for day, hours in hours_a_day.items()
+                ],
                 "categories": [_("Cottage hours"), _("Stationary hours")],
             }
         )
