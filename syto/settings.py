@@ -127,3 +127,9 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.1/topics/auth/customizing/#substituting-a-custom-user-model
 
 AUTH_USER_MODEL = "syto_api.User"
+
+
+# Django REST Framework
+# https://www.django-rest-framework.org
+
+REST_FRAMEWORK = {"DATETIME_FORMAT": "%Y-%m-%d %H:%M"}
