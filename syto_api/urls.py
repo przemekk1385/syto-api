@@ -7,5 +7,9 @@ from .routers import router
 app_name = SytoApiConfig.name
 urlpatterns = [
     path("", include(router.urls)),
-    path("availability", views.AvailabilityView.as_view(), name="availability-list"),
+    path(
+        "availability/",
+        views.total_availability_list_view,
+        name="total-availability-list",
+    ),
 ]

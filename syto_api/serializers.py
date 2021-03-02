@@ -93,7 +93,7 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
         model = AvailabilityHours
 
     @staticmethod
-    def validate_hours(val):
+    def validate_hours(val, *args, **kwargs):
         if val > 16:
             raise serializers.ValidationError(
                 ["Maximum allowed number of hours is 16."]
