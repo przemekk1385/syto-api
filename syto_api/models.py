@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -13,7 +14,7 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError("Users must have an email address")
 
-        user = self.model(self.normalize_email(email), **extra_fields)
+        user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
@@ -34,6 +35,7 @@ class UserManager(BaseUserManager):
         password=None,
         **extra_fields,
     ):
+        extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -48,8 +50,10 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
 
     # based on django.contrib.auth.models.AbstractUser
-    first_name = models.CharField(_("first name"), max_length=150, null=True)
-    last_name = models.CharField(_("last name"), max_length=150, null=True)
+    first_name = models.CharField(
+        _("first name"), max_length=150, blank=True, null=True
+    )
+    last_name = models.CharField(_("last name"), max_length=150, blank=True, null=True)
     email = models.EmailField(_("email address"), unique=True)
     is_staff = models.BooleanField(
         _("staff status"),
@@ -86,7 +90,7 @@ class AvailabilityHours(models.Model):
 
     day = models.DateField()
     hours = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __repr__(self):
         return "<AvailabilityHours day={} hours={}>".format(self.day, self.hours)
@@ -109,7 +113,7 @@ class AvailabilityPeriod(models.Model):
 
     start = models.DateTimeField()
     end = models.DateTimeField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __repr__(self):
         return "<AvailabilityPeriod start={} end={}>".format(self.start, self.end)
