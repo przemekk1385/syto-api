@@ -3,7 +3,7 @@ info:
   title: 'Syto API'
   version: 'v1'
 paths:
-  /api/user/:
+  /api/v1/user/:
     get:
       operationId: listUsers
       description: ''
@@ -43,7 +43,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/user/{id}/:
+  /api/v1/user/{id}/:
     get:
       operationId: retrieveUser
       description: ''
@@ -138,7 +138,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/availability/hours/:
+  /api/v1/availability/hours/:
     get:
       operationId: listAvailabilityHours
       description: ''
@@ -178,7 +178,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/availability/hours/{id}/:
+  /api/v1/availability/hours/{id}/:
     get:
       operationId: retrieveAvailabilityHours
       description: ''
@@ -273,7 +273,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/availability/period/:
+  /api/v1/availability/period/:
     get:
       operationId: listAvailabilityPeriods
       description: ''
@@ -313,7 +313,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/availability/period/{id}/:
+  /api/v1/availability/period/{id}/:
     get:
       operationId: retrieveAvailabilityPeriod
       description: ''
@@ -408,7 +408,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/availability/:
+  /api/v1/availability/:
     get:
       operationId: listTotalAvailability
       description: ''
