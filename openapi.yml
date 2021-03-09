@@ -445,11 +445,13 @@ components:
           items:
             type: string
           readOnly: true
-        evidence_number:
-          type: string
         date_of_birth:
           type: string
           format: date
+        phone_number:
+          type: string
+        address:
+          type: string
         is_new:
           type: boolean
           writeOnly: true
