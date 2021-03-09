@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from phonenumber_field import serializerfields
 from rest_framework import serializers
 
 from .models import AvailabilityHours, AvailabilityPeriod, User
@@ -12,8 +13,9 @@ class UserSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField()
     groups = serializers.SlugRelatedField("name", many=True, read_only=True)
 
-    evidence_number = serializers.CharField(required=False)
     date_of_birth = serializers.DateField(required=False)
+    phone_number = serializerfields.PhoneNumberField(required=False)
+    address = serializers.CharField(required=False)
 
     # extra field that doesn't go to db
     is_new = serializers.BooleanField(required=False, write_only=True)
@@ -27,8 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "groups",
-            "evidence_number",
             "date_of_birth",
+            "phone_number",
+            "address",
             "is_new",
             "is_cottage",
         ]
@@ -65,17 +68,10 @@ class UserSerializer(serializers.ModelSerializer):
         if attrs.get("is_new"):
             errors = {}
 
-            evidence_number = self.initial_data.get("evidence_number")
-            if not evidence_number:
-                errors["evidence_number"] = [
-                    "This field is required when 'is_new' flag is True."
-                ]
-
-            date_of_birth = self.initial_data.get("date_of_birth")
-            if not date_of_birth:
-                errors["date_of_birth"] = [
-                    "This field is required when 'is_new' flag is True."
-                ]
+            for key in ["date_of_birth", "phone_number", "address"]:
+                value = self.initial_data.get(key)
+                if not value:
+                    errors[key] = ["This field is required when 'is_new' flag is True."]
 
             if errors:
                 raise serializers.ValidationError(errors)

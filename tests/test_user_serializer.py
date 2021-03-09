@@ -14,7 +14,8 @@ def test_valid_data_new_stationary_worker():
         "last_name": "Bar",
         "is_new": True,
         "date_of_birth": date.today(),
-        "evidence_number": "11111111111",  # PESEL
+        "phone_number": "+48129999999",
+        "address": "foo 123, bar",
     }
 
     serializer = UserSerializer(data=data)
@@ -52,7 +53,8 @@ def test_valid_data_new_cottage_worker():
         "is_new": True,
         "is_cottage": True,
         "date_of_birth": date.today(),
-        "evidence_number": "11111111111",  # PESEL
+        "phone_number": "+48129999999",
+        "address": "foo 123, bar",
     }
 
     serializer = UserSerializer(data=data)
@@ -89,12 +91,12 @@ def test_invalid_data_new_employee():
         "first_name": "Foo",
         "last_name": "Bar",
         "is_new": True,
-        "evidence_number": "11111111111",  # PESEL
     }
 
     serializer = UserSerializer(data=data)
 
     assert not serializer.is_valid()
+    assert len(serializer.errors) == 3
 
 
 @pytest.mark.django_db
@@ -108,3 +110,4 @@ def test_invalid_data_old_employee():
     serializer = UserSerializer(data=data)
 
     assert not serializer.is_valid()
+    assert len(serializer.errors) == 1

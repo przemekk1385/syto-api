@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.db.models import ExpressionWrapper, F
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field import modelfields
 
 
 class UserManager(BaseUserManager):
@@ -71,7 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # extra fields
     date_of_birth = models.DateField(blank=True, null=True)
-    evidence_number = models.CharField(max_length=11, blank=True, null=True)
+    phone_number = modelfields.PhoneNumberField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
 
     objects = UserManager()
 
