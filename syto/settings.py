@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "phonenumber_field",
     "syto_api",
 ]
 
@@ -133,3 +134,10 @@ AUTH_USER_MODEL = "syto_api.User"
 # https://www.django-rest-framework.org
 
 REST_FRAMEWORK = {"DATETIME_FORMAT": "%Y-%m-%d %H:%M"}
+
+
+# django-phonenumber-field
+# https://github.com/stefanfoulis/django-phonenumber-field#basic-usage
+
+PHONENUMBER_DB_FORMAT = "E164"
+PHONENUMBER_DEFAULT_REGION = "PL"
