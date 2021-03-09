@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     first_name = serializers.CharField()
     last_name = serializers.CharField()
+    is_active = serializers.BooleanField(read_only=True)
     groups = serializers.SlugRelatedField("name", many=True, read_only=True)
 
     date_of_birth = serializers.DateField(required=False)
@@ -28,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "is_active",
             "groups",
             "date_of_birth",
             "phone_number",
