@@ -222,6 +222,38 @@
         ]
       }
     },
+    "/api/v1/user/{id}/toggle_is_active/": {
+      "get": {
+        "operationId": "toggleIsActiveUser",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this user.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsActiveStatus"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
     "/api/v1/availability/hours/": {
       "get": {
         "operationId": "listAvailabilityHours",
@@ -702,6 +734,10 @@
           "last_name": {
             "type": "string"
           },
+          "is_active": {
+            "type": "boolean",
+            "readOnly": true
+          },
           "groups": {
             "type": "array",
             "items": {
@@ -795,6 +831,14 @@
           },
           "stationary_hours": {
             "type": "integer"
+          }
+        }
+      },
+      "IsActiveStatus": {
+        "type": "object",
+        "properties": {
+          "is_active": {
+            "type": "boolean"
           }
         }
       }
