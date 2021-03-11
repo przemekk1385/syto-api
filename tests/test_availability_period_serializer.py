@@ -45,6 +45,7 @@ def test_end_before_start(syto_user, syto_slot):
 
     assert len(serializer.errors.get("non_field_errors")) == 1
     assert serializer.errors.get("slot") is None
+    assert serializer.errors.get("user") is None
     assert serializer.errors["non_field_errors"][0] == "End must be after start."
 
 
@@ -64,6 +65,7 @@ def test_exceeded_maximum_number_of_hours(syto_user, syto_slot):
 
     assert len(serializer.errors.get("non_field_errors")) == 1
     assert serializer.errors.get("slot") is None
+    assert serializer.errors.get("user") is None
     assert (
         serializer.errors["non_field_errors"][0]
         == "Maximum allowed number of hours is 16."
@@ -86,6 +88,7 @@ def test_not_full_number_of_hours(syto_user, syto_slot):
 
     assert len(serializer.errors.get("non_field_errors")) == 1
     assert serializer.errors.get("slot") is None
+    assert serializer.errors.get("user") is None
     assert (
         serializer.errors["non_field_errors"][0]
         == "Only full number of hours is allowed."
@@ -106,8 +109,9 @@ def test_non_open_day(syto_user, syto_slot):
     serializer = AvailabilityPeriodSerializer(data=data)
     serializer.is_valid()
 
-    assert not serializer.errors.get("non_field_errors")
+    assert serializer.errors.get("non_field_errors") is None
     assert len(serializer.errors.get("slot")) == 1
+    assert serializer.errors.get("user") is None
     assert serializer.errors["slot"][0] == "Cannot sign up for a non-open day."
 
 
@@ -131,8 +135,9 @@ def test_sign_up_only_once(syto_user, syto_slot):
     serializer.is_valid()
 
     assert serializer.errors.get("non_field_errors") is None
-    assert len(serializer.errors.get("slot")) == 1
-    assert serializer.errors["slot"][0] == "Worker can sign up only once for a day."
+    assert serializer.errors.get("slot") is None
+    assert len(serializer.errors.get("user")) == 1
+    assert serializer.errors["user"][0] == "Worker can sign up only once for a day."
 
 
 @pytest.mark.django_db
@@ -157,4 +162,5 @@ def test_workers_limit_reached(syto_user, syto_slot):
 
     assert serializer.errors.get("non_field_errors") is None
     assert len(serializer.errors.get("slot")) == 1
+    assert serializer.errors.get("user") is None
     assert serializer.errors["slot"][0] == "Limit of signed up workers reached."

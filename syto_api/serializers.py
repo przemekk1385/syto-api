@@ -97,7 +97,7 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
             attrs.setdefault("slot", self.instance.slot)
             attrs.setdefault("user", self.instance.user)
 
-        errors = {"slot": []}
+        errors = {"slot": [], "user": []}
         slot, user = (
             attrs["slot"],
             attrs["user"],
@@ -108,9 +108,10 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
             .filter(user=user)
             .exists()
         ):
-            errors["slot"].append("Worker can sign up only once for a day.")
+            errors["user"].append("Worker can sign up only once for a day.")
 
-        if errors["slot"]:
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
             raise serializers.ValidationError(errors)
 
         return attrs
@@ -153,7 +154,7 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             attrs.setdefault("slot", self.instance.slot)
             attrs.setdefault("user", self.instance.user)
 
-        errors = {"non_field_errors": [], "slot": []}
+        errors = {"non_field_errors": [], "slot": [], "user": []}
         start, end, slot, user = (
             attrs["start"],
             attrs["end"],
@@ -178,10 +179,11 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             .filter(user=user)
             .exists()
         ):
-            errors["slot"].append("Worker can sign up only once for a day.")
+            errors["user"].append("Worker can sign up only once for a day.")
 
-        if errors["non_field_errors"] or errors["slot"]:
-            raise serializers.ValidationError({k: v for k, v in errors.items() if v})
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return attrs
 

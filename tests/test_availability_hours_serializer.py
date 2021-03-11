@@ -63,4 +63,4 @@ def test_sign_up_only_once(syto_user, syto_slot):
     serializer.is_valid()
 
     assert len(serializer.errors) == 1
-    assert serializer.errors["slot"][0] == "Worker can sign up only once for a day."
+    assert serializer.errors["user"][0] == "Worker can sign up only once for a day."
