@@ -20,7 +20,7 @@ def test_valid_data(syto_user, syto_slot):
         "slot": syto_slot().day,
         "start": start.time(),
         "end": end.time(),
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     serializer = AvailabilityPeriodSerializer(data=data)
@@ -36,7 +36,7 @@ def test_end_before_start(syto_user, syto_slot):
         "slot": syto_slot().day,
         "start": start.time(),
         "end": end.time(),
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     serializer = AvailabilityPeriodSerializer(data=data)
@@ -54,7 +54,7 @@ def test_exceeded_maximum_number_of_hours(syto_user, syto_slot):
         "slot": syto_slot().day,
         "start": start.time(),
         "end": end.time(),
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     serializer = AvailabilityPeriodSerializer(data=data)
@@ -75,7 +75,7 @@ def test_not_full_number_of_hours(syto_user, syto_slot):
         "slot": syto_slot().day,
         "start": start.time(),
         "end": end.time(),
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     serializer = AvailabilityPeriodSerializer(data=data)

@@ -33,7 +33,9 @@ def syto_slot() -> Callable:
 
 @pytest.fixture
 def syto_user() -> Callable:
-    def make_syto_user(email: str, password: str = "FooBarBaz123") -> UserModel:
+    def make_syto_user(
+        email: str = "foo@bar.baz", password: str = "FooBarBaz123"
+    ) -> UserModel:
         return UserModel.objects.create(email=email, password=password)
 
     return make_syto_user

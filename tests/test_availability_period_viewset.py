@@ -22,7 +22,7 @@ def test_create_ok(api_client, syto_user, syto_slot):
         "slot": syto_slot().day,
         "start": start.time(),
         "end": end.time(),
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     response = api_client.post(reverse("syto_api:availability-period-list"), payload)
@@ -39,7 +39,7 @@ def test_retrieve_ok(api_client, syto_user, syto_slot):
         slot=syto_slot(),
         start=start.time(),
         end=end.time(),
-        user=syto_user("foo@bar.baz"),
+        user=syto_user(),
     )
 
     response = api_client.get(
@@ -61,7 +61,7 @@ def test_update_ok(api_client, syto_user, syto_slot):
         slot=syto_slot(),
         start=start.time(),
         end=end.time(),
-        user=syto_user("foo@bar.baz"),
+        user=syto_user(),
     )
 
     end = end + timedelta(hours=2)  # 16:00
@@ -86,7 +86,7 @@ def test_end_before_start(api_client, syto_user, syto_slot):
         slot=syto_slot(),
         start=start.time(),
         end=end.time(),
-        user=syto_user("foo@bar.baz"),
+        user=syto_user(),
     )
 
     end = start - timedelta(hours=2)  # 4:00
@@ -111,7 +111,7 @@ def test_update_exceeded_maximum_number_of_hours(api_client, syto_user, syto_slo
         slot=syto_slot(),
         start=start.time(),
         end=end.time(),
-        user=syto_user("foo@bar.baz"),
+        user=syto_user(),
     )
 
     end = start + timedelta(hours=17)  # 23:00
@@ -138,7 +138,7 @@ def test_update_not_full_number_of_hours(api_client, syto_user, syto_slot):
         slot=syto_slot(),
         start=start.time(),
         end=end.time(),
-        user=syto_user("foo@bar.baz"),
+        user=syto_user(),
     )
 
     end = start + timedelta(minutes=450)  # 13:30; 405 minutes = 7 hours 30 minutes

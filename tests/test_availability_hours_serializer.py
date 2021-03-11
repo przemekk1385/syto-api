@@ -8,7 +8,7 @@ def test_valid_data(syto_user, syto_slot):
     data = {
         "slot": syto_slot().day,
         "hours": 8,
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     serializer = AvailabilityHoursSerializer(data=data)
@@ -21,7 +21,7 @@ def test_exceeded_maximum_number_of_hours(syto_user, syto_slot):
     data = {
         "slot": syto_slot().day,
         "hours": 17,
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     serializer = AvailabilityHoursSerializer(data=data)

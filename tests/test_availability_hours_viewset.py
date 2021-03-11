@@ -19,7 +19,7 @@ def test_create_ok(api_client, syto_user, syto_slot):
     payload = {
         "slot": syto_slot().day,
         "hours": 8,
-        "user": syto_user("foo@bar.baz").id,
+        "user": syto_user().id,
     }
 
     response = api_client.post(reverse("syto_api:availability-hours-list"), payload)
@@ -31,7 +31,7 @@ def test_create_ok(api_client, syto_user, syto_slot):
 @pytest.mark.django_db
 def test_retrieve_ok(api_client, syto_user, syto_slot):
     availability = AvailabilityHours.objects.create(
-        slot=syto_slot(), hours=8, user=syto_user("foo@bar.baz")
+        slot=syto_slot(), hours=8, user=syto_user()
     )
 
     response = api_client.get(
@@ -45,7 +45,7 @@ def test_retrieve_ok(api_client, syto_user, syto_slot):
 @pytest.mark.django_db
 def test_update_ok(api_client, syto_user, syto_slot):
     availability = AvailabilityHours.objects.create(
-        slot=syto_slot(), hours=8, user=syto_user("foo@bar.baz")
+        slot=syto_slot(), hours=8, user=syto_user()
     )
 
     response = api_client.patch(

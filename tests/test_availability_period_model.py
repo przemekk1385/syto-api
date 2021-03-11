@@ -20,7 +20,7 @@ def test_query_set(syto_user, syto_slot):
         slot=syto_slot(),
         start=start.time(),
         end=end.time(),
-        user=syto_user("foo@bar.baz"),
+        user=syto_user(),
     )
 
     assert (
