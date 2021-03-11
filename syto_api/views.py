@@ -1,50 +1,27 @@
-from copy import copy
-
-from django.db.models import Sum
+from django.db import models
+from django.db.models import OuterRef, Subquery, Sum
+from django.db.models.functions import Coalesce
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import AvailabilityHours, AvailabilityPeriod
+from .models import AvailabilityPeriod, Slot
 
 
 @api_view(["GET"])
 def total_availability_list_view(__):
-    default_hours = {}
-    default_hours.setdefault("cottage_hours", 0)
-    default_hours.setdefault("stationary_hours", 0)
-
-    def make_hours(**kwargs):
-        hours = copy(default_hours)
-        hours.update(**kwargs)
-        return hours
-
-    hours_a_day = {
-        item["day"]: make_hours(cottage_hours=item["hours_total"])
-        for item in AvailabilityHours.objects.values("day")
-        .annotate(hours_total=Sum("hours"))
-        .order_by("day")
-        .values("day", "hours_total")
-    }
-
-    for item in (
-        AvailabilityPeriod.objects.with_timedelta()
-        .values("start__date")
-        .annotate(timedelta_total=Sum("timedelta"))
-        .order_by("start__date")
-        .values("start__date", "timedelta_total")
-    ):
-        hours_total = item["timedelta_total"].seconds // 3600
-        try:
-            hours_a_day[item["start__date"]]["stationary_hours"] = hours_total
-        except KeyError:
-            hours_a_day[item["start__date"]] = make_hours(stationary_hours=hours_total)
-
-    return Response(
-        data=[
-            {
-                "day": day.strftime("%Y-%m-%d"),
-                **hours,
-            }
-            for day, hours in hours_a_day.items()
-        ]
+    timedelta = (
+        AvailabilityPeriod.objects.filter(slot=OuterRef("day"))
+        .with_timedelta()
+        .order_by()
+        .values("timedelta")
     )
+    total_timedelta = timedelta.annotate(
+        total_timedelta=Sum("timedelta", output_field=models.IntegerField())
+    ).values("total_timedelta")
+
+    qs = Slot.objects.annotate(
+        cottage_hours=Coalesce(Sum("availabilityhours__hours"), 0),
+        stationary_hours=Coalesce(Subquery(total_timedelta) / 10 ** 6 / 3600, 0),
+    ).values("day", "cottage_hours", "stationary_hours")
+
+    return Response(data=qs)

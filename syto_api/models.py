@@ -88,17 +88,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class Slot(models.Model):
+
+    day = models.DateField(primary_key=True)
+    stationary_workers_limit = models.IntegerField(blank=True, null=True)
+    is_open_for_cottage_workers = models.BooleanField(blank=True, null=True)
+
+
 class AvailabilityHours(models.Model):
 
-    day = models.DateField()
+    slot = models.ForeignKey(Slot, on_delete=models.CASCADE)
     hours = models.IntegerField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __repr__(self):
-        return "<AvailabilityHours day={} hours={}>".format(self.day, self.hours)
+        return "<AvailabilityHours day={} hours={}>".format(self.slot.day, self.hours)
 
     def __str__(self):
-        return _("{}, {} hours").format(self.day, self.hours)
+        return _("{}, {} hours").format(self.slot.day, self.hours)
 
 
 class AvailabilityPeriodQuerySet(models.QuerySet):
@@ -113,14 +120,23 @@ class AvailabilityPeriod(models.Model):
 
     objects = AvailabilityPeriodQuerySet.as_manager()
 
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    slot = models.ForeignKey(Slot, on_delete=models.CASCADE)
+    start = models.TimeField()
+    end = models.TimeField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    @property
+    def start_datetime(self):
+        return "{} {}".format(self.slot.day, self.start.strftime("%H:%M"))
+
+    @property
+    def end_datetime(self):
+        return "{} {}".format(self.slot.day, self.end.strftime("%H:%M"))
+
     def __repr__(self):
-        return "<AvailabilityPeriod start={} end={}>".format(self.start, self.end)
+        return "<AvailabilityPeriod start={} end={}>".format(
+            self.start_datetime, self.end_datetime
+        )
 
     def __str__(self):
-        return "{}-{}".format(
-            self.start.strftime("%Y-%m-%d %H:%M"), self.end.strftime("%H:%M")
-        )
+        return _("from {} to {}").format(self.start_datetime, self.end_datetime)
