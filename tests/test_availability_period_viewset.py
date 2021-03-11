@@ -19,7 +19,7 @@ def test_create_ok(api_client, syto_user, syto_slot):
     start = START  # 6:00
     end = start + timedelta(hours=8)  # 14:00
     payload = {
-        "slot": syto_slot().day,
+        "slot": syto_slot(stationary_workers_limit=1).day,
         "start": start.time(),
         "end": end.time(),
         "user": syto_user().id,
@@ -36,7 +36,7 @@ def test_retrieve_ok(api_client, syto_user, syto_slot):
     start = START  # 6:00
     end = start + timedelta(hours=8)  # 14:00
     availability = AvailabilityPeriod.objects.create(
-        slot=syto_slot(),
+        slot=syto_slot(stationary_workers_limit=1),
         start=start.time(),
         end=end.time(),
         user=syto_user(),
@@ -58,7 +58,7 @@ def test_update_ok(api_client, syto_user, syto_slot):
     start = START  # 6:00
     end = start + timedelta(hours=8)  # 14:00
     availability = AvailabilityPeriod.objects.create(
-        slot=syto_slot(),
+        slot=syto_slot(stationary_workers_limit=1),
         start=start.time(),
         end=end.time(),
         user=syto_user(),
@@ -83,7 +83,7 @@ def test_end_before_start(api_client, syto_user, syto_slot):
     end = start + timedelta(hours=8)  # 14:00
 
     availability = AvailabilityPeriod.objects.create(
-        slot=syto_slot(),
+        slot=syto_slot(stationary_workers_limit=1),
         start=start.time(),
         end=end.time(),
         user=syto_user(),
@@ -98,7 +98,8 @@ def test_end_before_start(api_client, syto_user, syto_slot):
     )
 
     assert response.status_code == 400
-    assert len(response.data["non_field_errors"]) == 1
+    assert len(response.data.get("non_field_errors")) == 1
+    assert response.data.get("slot") is None
     assert response.data["non_field_errors"][0] == "End must be after start."
 
 
@@ -108,7 +109,7 @@ def test_update_exceeded_maximum_number_of_hours(api_client, syto_user, syto_slo
     end = start + timedelta(hours=8)  # 14:00
 
     availability = AvailabilityPeriod.objects.create(
-        slot=syto_slot(),
+        slot=syto_slot(stationary_workers_limit=1),
         start=start.time(),
         end=end.time(),
         user=syto_user(),
@@ -123,7 +124,8 @@ def test_update_exceeded_maximum_number_of_hours(api_client, syto_user, syto_slo
     )
 
     assert response.status_code == 400
-    assert len(response.data["non_field_errors"]) == 1
+    assert len(response.data.get("non_field_errors")) == 1
+    assert response.data.get("slot") is None
     assert (
         response.data["non_field_errors"][0] == "Maximum allowed number of hours is 16."
     )
@@ -150,7 +152,8 @@ def test_update_not_full_number_of_hours(api_client, syto_user, syto_slot):
     )
 
     assert response.status_code == 400
-    assert len(response.data["non_field_errors"]) == 1
+    assert len(response.data.get("non_field_errors")) == 1
+    assert response.data.get("slot") is None
     assert (
         response.data["non_field_errors"][0] == "Only full number of hours is allowed."
     )

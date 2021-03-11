@@ -115,22 +115,52 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
         if self.instance:
             attrs.setdefault("start", self.instance.start)
             attrs.setdefault("end", self.instance.end)
+            attrs.setdefault("slot", self.instance.slot)
+            attrs.setdefault("user", self.instance.user)
 
-        errors = {"non_field_errors": []}
+        errors = {"non_field_errors": [], "slot": []}
+        start, end, slot, user = (
+            attrs["start"],
+            attrs["end"],
+            attrs["slot"],
+            attrs["user"],
+        )
 
-        if attrs["start"] >= attrs["end"]:
-            errors["non_field_errors"].append("End must be after start.")
-
-        td = timedelta(
-            hours=attrs["end"].hour, minutes=attrs["end"].minute
-        ) - timedelta(hours=attrs["start"].hour, minutes=attrs["start"].minute)
+        td = timedelta(hours=end.hour, minutes=end.minute) - timedelta(
+            hours=start.hour, minutes=start.minute
+        )
         if td.days >= 0 and td.seconds // 3600 > 16:
             errors["non_field_errors"].append("Maximum allowed number of hours is 16.")
 
-        if attrs["start"].minute != attrs["end"].minute:
+        if start >= end:
+            errors["non_field_errors"].append("End must be after start.")
+
+        if start.minute != end.minute:
             errors["non_field_errors"].append("Only full number of hours is allowed.")
 
-        if errors["non_field_errors"]:
-            raise serializers.ValidationError(errors)
+        if (
+            slot.availabilityperiod_set.exclude(id=getattr(self.instance, "id", None))
+            .filter(user=user)
+            .exists()
+        ):
+            errors["slot"].append("Worker can sign up only once for a day.")
+
+        if errors["non_field_errors"] or errors["slot"]:
+            raise serializers.ValidationError({k: v for k, v in errors.items() if v})
 
         return attrs
+
+    @staticmethod
+    def validate_slot(val, *args, **kwargs):
+        errors = []
+
+        if not val.stationary_workers_limit:
+            errors.append("Cannot sign up for a non-open day.")
+
+        if val.availabilityperiod_set.count() == val.stationary_workers_limit:
+            errors.append("Limit of signed up workers reached.")
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return val
