@@ -92,12 +92,47 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
         fields = "__all__"
         model = AvailabilityHours
 
+    def validate(self, attrs):
+        if self.instance:
+            attrs.setdefault("slot", self.instance.slot)
+            attrs.setdefault("user", self.instance.user)
+
+        errors = {"slot": []}
+        slot, user = (
+            attrs["slot"],
+            attrs["user"],
+        )
+
+        if (
+            slot.availabilityhours_set.exclude(id=getattr(self.instance, "id", None))
+            .filter(user=user)
+            .exists()
+        ):
+            errors["slot"].append("Worker can sign up only once for a day.")
+
+        if errors["slot"]:
+            raise serializers.ValidationError(errors)
+
+        return attrs
+
     @staticmethod
     def validate_hours(val, *args, **kwargs):
         if val > 16:
             raise serializers.ValidationError(
                 ["Maximum allowed number of hours is 16."]
             )
+
+        return val
+
+    @staticmethod
+    def validate_slot(val, *args, **kwargs):
+        errors = []
+
+        if not val.is_open_for_cottage_workers:
+            errors.append("Cannot sign up for a non-open day.")
+
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return val
 

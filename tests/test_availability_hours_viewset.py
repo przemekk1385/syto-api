@@ -17,7 +17,7 @@ START = timezone.datetime(TODAY.year, TODAY.month, TODAY.day, 6, 0, 0, tzinfo=tz
 @pytest.mark.django_db
 def test_create_ok(api_client, syto_user, syto_slot):
     payload = {
-        "slot": syto_slot().day,
+        "slot": syto_slot(is_open_for_cottage_workers=True).day,
         "hours": 8,
         "user": syto_user().id,
     }
@@ -31,7 +31,7 @@ def test_create_ok(api_client, syto_user, syto_slot):
 @pytest.mark.django_db
 def test_retrieve_ok(api_client, syto_user, syto_slot):
     availability = AvailabilityHours.objects.create(
-        slot=syto_slot(), hours=8, user=syto_user()
+        slot=syto_slot(is_open_for_cottage_workers=True), hours=8, user=syto_user()
     )
 
     response = api_client.get(
@@ -45,7 +45,7 @@ def test_retrieve_ok(api_client, syto_user, syto_slot):
 @pytest.mark.django_db
 def test_update_ok(api_client, syto_user, syto_slot):
     availability = AvailabilityHours.objects.create(
-        slot=syto_slot(), hours=8, user=syto_user()
+        slot=syto_slot(is_open_for_cottage_workers=True), hours=8, user=syto_user()
     )
 
     response = api_client.patch(
