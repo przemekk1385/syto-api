@@ -94,6 +94,30 @@ class Slot(models.Model):
     stationary_workers_limit = models.IntegerField(blank=True, null=True)
     is_open_for_cottage_workers = models.BooleanField(blank=True, null=True)
 
+    @property
+    def _is_open_for_cottage_workers(self):
+        return False if self.is_open_for_cottage_workers is None else True
+
+    @property
+    def _stationary_workers_limit(self):
+        return 0 if not self.stationary_workers_limit else self.stationary_workers_limit
+
+    def __repr__(self):
+        return (
+            "<Slot day={} stationary_workers_limit={} is_open_for_cottage_workers={}>"
+        ).format(
+            self.day, self._stationary_workers_limit, self._is_open_for_cottage_workers
+        )
+
+    def __str__(self):
+        return _("{}, stationary workers limit {}{}").format(
+            self.day,
+            self._stationary_workers_limit,
+            _(", open for cottage workers")
+            if self._is_open_for_cottage_workers
+            else "",
+        )
+
 
 class AvailabilityHours(models.Model):
 
