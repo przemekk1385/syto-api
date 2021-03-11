@@ -13,12 +13,13 @@ START = timezone.datetime(TODAY.year, TODAY.month, TODAY.day, 6, 0, 0, tzinfo=tz
 
 
 @pytest.mark.django_db
-def test_query_set(syto_user):
+def test_query_set(syto_user, syto_slot):
     start = START
-    end = START + timedelta(hours=8)
+    end = start + timedelta(hours=8)
     AvailabilityPeriod.objects.create(
-        start=start,
-        end=end,
+        slot=syto_slot(),
+        start=start.time(),
+        end=end.time(),
         user=syto_user("foo@bar.baz"),
     )
 

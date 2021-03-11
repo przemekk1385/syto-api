@@ -1,16 +1,12 @@
-from datetime import date
-
 import pytest
 
 from syto_api.serializers import AvailabilityHoursSerializer
 
-TODAY = date.today()
-
 
 @pytest.mark.django_db
-def test_valid_data(syto_user):
+def test_valid_data(syto_user, syto_slot):
     data = {
-        "day": TODAY,
+        "slot": syto_slot().day,
         "hours": 8,
         "user": syto_user("foo@bar.baz").id,
     }
@@ -21,9 +17,9 @@ def test_valid_data(syto_user):
 
 
 @pytest.mark.django_db
-def test_exceeded_maximum_number_of_hours(syto_user):
+def test_exceeded_maximum_number_of_hours(syto_user, syto_slot):
     data = {
-        "day": TODAY,
+        "slot": syto_slot().day,
         "hours": 17,
         "user": syto_user("foo@bar.baz").id,
     }
