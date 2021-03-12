@@ -28,7 +28,17 @@ class UserViewSet(viewsets.ModelViewSet):
 class AvailabilityHoursAccessPolicy(AccessPolicy):
 
     statements = [
-        {"action": ["*"], "principal": ["group:cottage_worker"], "effect": "allow"}
+        {
+            "action": ["create"],
+            "principal": ["group:cottage_worker"],
+            "effect": "allow",
+        },
+        {
+            "action": ["retrieve", "update", "partial_update", "delete"],
+            "principal": ["*"],
+            "effect": "allow",
+            "condition": "is_owner",
+        },
     ]
 
 
@@ -42,7 +52,17 @@ class AvailabilityHoursViewSet(viewsets.ModelViewSet):
 class AvailabilityPeriodAccessPolicy(AccessPolicy):
 
     statements = [
-        {"action": ["*"], "principal": ["group:stationary_worker"], "effect": "allow"}
+        {
+            "action": ["create"],
+            "principal": ["group:stationary_worker"],
+            "effect": "allow",
+        },
+        {
+            "action": ["retrieve", "update", "partial_update", "delete"],
+            "principal": ["*"],
+            "effect": "allow",
+            "condition": "is_owner",
+        },
     ]
 
 

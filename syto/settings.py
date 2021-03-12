@@ -141,3 +141,9 @@ REST_FRAMEWORK = {"DATETIME_FORMAT": "%Y-%m-%d %H:%M", "TIME_FORMAT": "%H:%M"}
 
 PHONENUMBER_DB_FORMAT = "E164"
 PHONENUMBER_DEFAULT_REGION = "PL"
+
+
+# drf-access-policy
+# https://rsinger86.github.io/drf-access-policy/
+
+DRF_ACCESS_POLICY = {"reusable_conditions": "syto_api.global_access_conditions"}
