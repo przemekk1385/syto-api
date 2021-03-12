@@ -86,6 +86,7 @@ class UserSerializer(serializers.ModelSerializer):
 class AvailabilityHoursSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
 
@@ -141,6 +142,7 @@ class AvailabilityHoursSerializer(serializers.ModelSerializer):
 class AvailabilityPeriodSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
 

@@ -14,7 +14,6 @@ def test_create_ok(api_client, syto_user, syto_slot):
     payload = {
         "slot": syto_slot(is_open_for_cottage_workers=True).day,
         "hours": 8,
-        "user": user.id,
     }
 
     response = api_client.post(reverse("syto_api:availability-hours-list"), payload)

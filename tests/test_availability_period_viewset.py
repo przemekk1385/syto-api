@@ -20,7 +20,6 @@ def test_create_ok(api_client, syto_user, syto_slot):
         "slot": syto_slot(stationary_workers_limit=1).day,
         "start": "6:00",
         "end": "14:00",
-        "user": user.id,
     }
 
     response = api_client.post(reverse("syto_api:availability-period-list"), payload)

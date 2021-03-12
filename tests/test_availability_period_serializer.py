@@ -5,15 +5,17 @@ from syto_api.serializers import AvailabilityPeriodSerializer
 
 
 @pytest.mark.django_db
-def test_valid_data(syto_user, syto_slot):
+def test_valid_data(rf, syto_user, syto_slot):
+    request = rf.post("foo")
+    request.user = syto_user()
+
     data = {
         "slot": syto_slot(stationary_workers_limit=1).day,
         "start": "6:00",
         "end": "14:00",
-        "user": syto_user().id,
     }
 
-    serializer = AvailabilityPeriodSerializer(data=data)
+    serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
 
     assert serializer.is_valid()
 
@@ -27,15 +29,17 @@ def test_valid_data(syto_user, syto_slot):
     ],
 )
 @pytest.mark.django_db
-def test_non_field_errors(start, end, error_message, syto_user, syto_slot):
+def test_non_field_errors(rf, start, end, error_message, syto_user, syto_slot):
+    request = rf.post("foo")
+    request.user = syto_user()
+
     data = {
         "slot": syto_slot(stationary_workers_limit=1).day,
         "start": start,
         "end": end,
-        "user": syto_user().id,
     }
 
-    serializer = AvailabilityPeriodSerializer(data=data)
+    serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
     assert len(serializer.errors.get("non_field_errors")) == 1
@@ -45,15 +49,17 @@ def test_non_field_errors(start, end, error_message, syto_user, syto_slot):
 
 
 @pytest.mark.django_db
-def test_non_open_day(syto_user, syto_slot):
+def test_non_open_day(rf, syto_user, syto_slot):
+    request = rf.post("foo")
+    request.user = syto_user()
+
     data = {
         "slot": syto_slot().day,
         "start": "6:00",
         "end": "14:00",
-        "user": syto_user().id,
     }
 
-    serializer = AvailabilityPeriodSerializer(data=data)
+    serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
     assert serializer.errors.get("non_field_errors") is None
@@ -63,20 +69,22 @@ def test_non_open_day(syto_user, syto_slot):
 
 
 @pytest.mark.django_db
-def test_workers_limit_reached(syto_user, syto_slot):
+def test_workers_limit_reached(rf, syto_user, syto_slot):
     slot = syto_slot(stationary_workers_limit=1)
     user1 = syto_user("foo1@bar.baz")
     user2 = syto_user("foo2@bar.baz")
     AvailabilityPeriod.objects.create(slot=slot, start="6:00", end="14:00", user=user1)
 
+    request = rf.post("foo")
+    request.user = user2
+
     data = {
         "slot": slot.day,
         "start": "6:00",
         "end": "14:00",
-        "user": user2.id,
     }
 
-    serializer = AvailabilityPeriodSerializer(data=data)
+    serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
     assert serializer.errors.get("non_field_errors") is None
@@ -86,19 +94,21 @@ def test_workers_limit_reached(syto_user, syto_slot):
 
 
 @pytest.mark.django_db
-def test_sign_up_only_once(syto_user, syto_slot):
+def test_sign_up_only_once(rf, syto_user, syto_slot):
     slot = syto_slot(stationary_workers_limit=99)
     user = syto_user()
     AvailabilityPeriod.objects.create(slot=slot, start="14:00", end="22:00", user=user)
+
+    request = rf.post("foo")
+    request.user = user
 
     data = {
         "slot": slot.day,
         "start": "6:00",
         "end": "14:00",
-        "user": user.id,
     }
 
-    serializer = AvailabilityPeriodSerializer(data=data)
+    serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
     assert serializer.errors.get("non_field_errors") is None
