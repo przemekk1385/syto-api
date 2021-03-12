@@ -8,10 +8,13 @@ from syto_api.models import AvailabilityHours
 
 @pytest.mark.django_db
 def test_create_ok(api_client, syto_user, syto_slot):
+    user = syto_user(groups=["cottage_worker"])
+    api_client.force_authenticate(user)
+
     payload = {
         "slot": syto_slot(is_open_for_cottage_workers=True).day,
         "hours": 8,
-        "user": syto_user().id,
+        "user": user.id,
     }
 
     response = api_client.post(reverse("syto_api:availability-hours-list"), payload)
@@ -22,8 +25,13 @@ def test_create_ok(api_client, syto_user, syto_slot):
 
 @pytest.mark.django_db
 def test_retrieve_ok(api_client, syto_user, syto_slot):
+    user = syto_user(groups=["cottage_worker"])
+    api_client.force_authenticate(user)
+
     availability = AvailabilityHours.objects.create(
-        slot=syto_slot(is_open_for_cottage_workers=True), hours=8, user=syto_user()
+        slot=syto_slot(is_open_for_cottage_workers=True),
+        hours=8,
+        user=user,
     )
 
     response = api_client.get(
@@ -36,8 +44,13 @@ def test_retrieve_ok(api_client, syto_user, syto_slot):
 
 @pytest.mark.django_db
 def test_update_ok(api_client, syto_user, syto_slot):
+    user = syto_user(groups=["cottage_worker"])
+    api_client.force_authenticate(user)
+
     availability = AvailabilityHours.objects.create(
-        slot=syto_slot(is_open_for_cottage_workers=True), hours=8, user=syto_user()
+        slot=syto_slot(is_open_for_cottage_workers=True),
+        hours=8,
+        user=user,
     )
 
     response = api_client.patch(

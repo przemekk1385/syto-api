@@ -1,3 +1,4 @@
+from rest_access_policy import AccessPolicy
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -24,13 +25,29 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({"is_active": instance.is_active}, status=status.HTTP_200_OK)
 
 
+class AvailabilityHoursAccessPolicy(AccessPolicy):
+
+    statements = [
+        {"action": ["*"], "principal": ["group:cottage_worker"], "effect": "allow"}
+    ]
+
+
 class AvailabilityHoursViewSet(viewsets.ModelViewSet):
 
+    permission_classes = [AvailabilityHoursAccessPolicy]
     serializer_class = AvailabilityHoursSerializer
     queryset = AvailabilityHours.objects.all()
 
 
+class AvailabilityPeriodAccessPolicy(AccessPolicy):
+
+    statements = [
+        {"action": ["*"], "principal": ["group:stationary_worker"], "effect": "allow"}
+    ]
+
+
 class AvailabilityPeriodViewSet(viewsets.ModelViewSet):
 
+    permission_classes = [AvailabilityPeriodAccessPolicy]
     serializer_class = AvailabilityPeriodSerializer
     queryset = AvailabilityPeriod.objects.all()

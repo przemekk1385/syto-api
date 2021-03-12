@@ -1,13 +1,9 @@
-"""
-TODO:
-- create user with group
-"""
-
 from datetime import date
 from typing import Callable
 
 import pytest
 from django.contrib.auth.backends import get_user_model
+from django.contrib.auth.models import Group
 from rest_framework.test import APIClient
 
 from syto_api.models import Slot
@@ -39,8 +35,14 @@ def syto_slot() -> Callable:
 @pytest.fixture
 def syto_user() -> Callable:
     def make_syto_user(
-        email: str = "foo@bar.baz", password: str = "FooBarBaz123"
+        email: str = "foo@bar.baz", password: str = "FooBarBaz123", groups: list = None
     ) -> UserModel:
-        return UserModel.objects.create(email=email, password=password)
+        groups = groups or []
+
+        user = UserModel.objects.create(email=email, password=password)
+        user.groups.set(
+            [Group.objects.get_or_create(name=group_name)[0] for group_name in groups]
+        )
+        return user
 
     return make_syto_user
