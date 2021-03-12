@@ -1,17 +1,12 @@
 from datetime import date, timedelta
 
 import pytest
-from dateutil import tz
-from django.conf import settings
 from django.shortcuts import reverse
-from django.utils import timezone
 
 from syto_api.models import AvailabilityHours, AvailabilityPeriod
 from syto_api.views import total_availability_list_view
 
-tz = tz.gettz(settings.TIME_ZONE)
 TODAY = date.today()
-START = timezone.datetime(TODAY.year, TODAY.month, TODAY.day, 6, 0, 0, tzinfo=tz)
 
 
 @pytest.mark.django_db
@@ -27,19 +22,16 @@ def test_get(rf, syto_user, syto_slot):
         )
 
     for i in range(10):
-        start = START - timedelta(days=i)
-        end = start + timedelta(hours=8)
-
         AvailabilityPeriod.objects.create(
-            slot=syto_slot(start.date()),
-            start=start.time(),
-            end=end.time(),
+            slot=syto_slot(TODAY - timedelta(days=i)),
+            start="6:00",
+            end="14:00",
             user=users[0],
         )
         AvailabilityPeriod.objects.create(
-            slot=syto_slot(start.date()),
-            start=start.time(),
-            end=end.time(),
+            slot=syto_slot(TODAY - timedelta(days=i)),
+            start="6:00",
+            end="14:00",
             user=users[1],
         )
 

@@ -1,17 +1,9 @@
 import json
-from datetime import date
 
 import pytest
-from dateutil import tz
-from django.conf import settings
 from django.shortcuts import reverse
-from django.utils import timezone
 
 from syto_api.models import AvailabilityHours
-
-tz = tz.gettz(settings.TIME_ZONE)
-TODAY = date.today()
-START = timezone.datetime(TODAY.year, TODAY.month, TODAY.day, 6, 0, 0, tzinfo=tz)
 
 
 @pytest.mark.django_db
