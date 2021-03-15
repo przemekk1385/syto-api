@@ -4,7 +4,7 @@ from datetime import date
 import pytest
 from django.shortcuts import reverse
 
-from syto_api.models import Slot
+from syto_api.models import AvailabilityPeriod, Slot
 
 TODAY = date.today()
 
@@ -86,6 +86,35 @@ def test_update_ok(api_client, syto_user):
 
     assert response.status_code == 200
     assert response.data["stationary_workers_limit"] == 99
+
+
+@pytest.mark.django_db
+def test_update_stationary_workers_limit_ok(api_client, syto_user):
+    user = syto_user(groups=["foreman"])
+    api_client.force_authenticate(user)
+
+    slot = Slot.objects.create(
+        day=TODAY,
+        stationary_workers_limit=5,
+        is_open_for_cottage_workers=True,
+    )
+
+    for i in range(5):
+        AvailabilityPeriod.objects.create(
+            slot=slot,
+            start="6:00",
+            end="14:00",
+            user=syto_user(f"foo{i}@bar.baz", groups=["stationary_worker"]),
+        )
+
+    response = api_client.patch(
+        reverse("syto_api:slot-detail", args=[slot.day]),
+        data=json.dumps({"stationary_workers_limit": 1}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert AvailabilityPeriod.objects.filter(slot=slot).count() == 1
 
 
 @pytest.mark.parametrize(
