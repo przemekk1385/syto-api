@@ -8,7 +8,7 @@ from .models import AvailabilityPeriod, Slot
 
 
 @api_view(["GET"])
-def total_availability_list_view(__):
+def total_availability_list_view(_):
     timedelta = (
         AvailabilityPeriod.objects.filter(slot=OuterRef("day"))
         .with_timedelta()
