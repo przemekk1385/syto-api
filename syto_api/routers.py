@@ -3,7 +3,8 @@ from rest_framework import routers
 from . import viewsets
 
 router = routers.DefaultRouter()
-router.register("user", viewsets.UserViewSet, basename="user"),
+router.register("user", viewsets.UserViewSet, basename="user")
+router.register("slot", viewsets.SlotViewSet, basename="slot")
 router.register(
     "availability/hours",
     viewsets.AvailabilityHoursViewSet,
@@ -14,4 +15,3 @@ router.register(
     viewsets.AvailabilityPeriodViewSet,
     basename="availability-period",
 )
-router.register("slot", viewsets.SlotViewSet, basename="slot")
