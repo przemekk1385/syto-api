@@ -8,9 +8,9 @@ router.register(
     "availability/hours",
     viewsets.AvailabilityHoursViewSet,
     basename="availability-hours",
-),
+)
 router.register(
     "availability/period",
     viewsets.AvailabilityPeriodViewSet,
     basename="availability-period",
-),
+)
