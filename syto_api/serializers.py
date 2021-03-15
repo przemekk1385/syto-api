@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from phonenumber_field import serializerfields
 from rest_framework import serializers
 
-from .models import AvailabilityHours, AvailabilityPeriod, User
+from .models import AvailabilityHours, AvailabilityPeriod, Slot, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -203,3 +203,13 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
 
         return val
+
+
+class SlotSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+
+        fields = "__all__"
+        model = Slot

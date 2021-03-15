@@ -14,3 +14,4 @@ router.register(
     viewsets.AvailabilityPeriodViewSet,
     basename="availability-period",
 )
+router.register("slot", viewsets.SlotViewSet, basename="slot")

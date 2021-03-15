@@ -3,10 +3,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import AvailabilityHours, AvailabilityPeriod, User
+from .models import AvailabilityHours, AvailabilityPeriod, Slot, User
 from .serializers import (
     AvailabilityHoursSerializer,
     AvailabilityPeriodSerializer,
+    SlotSerializer,
     UserSerializer,
 )
 
@@ -71,3 +72,26 @@ class AvailabilityPeriodViewSet(viewsets.ModelViewSet):
     permission_classes = [AvailabilityPeriodAccessPolicy]
     serializer_class = AvailabilityPeriodSerializer
     queryset = AvailabilityPeriod.objects.all()
+
+
+class SlotAccessPolicy(AccessPolicy):
+
+    statements = [
+        {
+            "action": ["*"],
+            "principal": ["group:foreman"],
+            "effect": "allow",
+        },
+        {
+            "action": ["list", "retrieve"],
+            "principal": ["group:cottage_worker", "group:stationary_worker"],
+            "effect": "allow",
+        },
+    ]
+
+
+class SlotViewSet(viewsets.ModelViewSet):
+
+    permission_classes = [SlotAccessPolicy]
+    serializer_class = SlotSerializer
+    queryset = Slot.objects.all()
