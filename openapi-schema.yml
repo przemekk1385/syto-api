@@ -158,6 +158,141 @@ paths:
           description: ''
       tags:
       - api
+  /api/v1/slot/:
+    get:
+      operationId: listSlots
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Slot'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createSlot
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Slot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Slot'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slot'
+          description: ''
+      tags:
+      - api
+  /api/v1/slot/{day}/:
+    get:
+      operationId: retrieveSlot
+      description: ''
+      parameters:
+      - name: day
+        in: path
+        required: true
+        description: A unique value identifying this slot.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slot'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateSlot
+      description: ''
+      parameters:
+      - name: day
+        in: path
+        required: true
+        description: A unique value identifying this slot.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Slot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Slot'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slot'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateSlot
+      description: ''
+      parameters:
+      - name: day
+        in: path
+        required: true
+        description: A unique value identifying this slot.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Slot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Slot'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slot'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroySlot
+      description: ''
+      parameters:
+      - name: day
+        in: path
+        required: true
+        description: A unique value identifying this slot.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
   /api/v1/availability/hours/:
     get:
       operationId: listAvailabilityHours
@@ -485,23 +620,38 @@ components:
       - email
       - first_name
       - last_name
+    IsActiveStatus:
+      type: object
+      properties:
+        is_active:
+          type: boolean
+    Slot:
+      type: object
+      properties:
+        day:
+          type: string
+          format: date
+        stationary_workers_limit:
+          type: integer
+          nullable: true
+        is_open_for_cottage_workers:
+          type: boolean
+          nullable: true
+      required:
+      - day
     AvailabilityHours:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
-        day:
-          type: string
-          format: date
         hours:
           type: integer
-        user:
-          type: integer
+        slot:
+          type: string
       required:
-      - day
       - hours
-      - user
+      - slot
     AvailabilityPeriod:
       type: object
       properties:
@@ -510,28 +660,21 @@ components:
           readOnly: true
         start:
           type: string
-          format: date-time
         end:
           type: string
-          format: date-time
-        user:
-          type: integer
+        slot:
+          type: string
       required:
       - start
       - end
-      - user
+      - slot
     TotalAvailability:
-      type: object
-      properties:
-        day:
-          type: string
-          format: date
-        cottage_hours:
-          type: integer
-        stationary_hours:
-          type: integer
-    IsActiveStatus:
-      type: object
-      properties:
-        is_active:
-          type: boolean
+          type: object
+          properties:
+            day:
+              type: string
+              format: date
+            cottage_hours:
+              type: integer
+            stationary_hours:
+              type: integer
