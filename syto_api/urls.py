@@ -19,7 +19,7 @@ urlpatterns = [
         name="total-availability-list",
     ),
     path(
-        f"{API_VERSION_PREFIX}/",
+        f"{API_VERSION_PREFIX}/swagger",
         TemplateView.as_view(template_name=TEMPLATES_DIR / "swagger-ui.html"),
     ),
 ]
