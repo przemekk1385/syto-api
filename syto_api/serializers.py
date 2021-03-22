@@ -1,6 +1,8 @@
+import abc
 from datetime import timedelta
 
 from django.contrib.auth.models import Group
+from django.db.models import Q
 from phonenumber_field import serializerfields
 from rest_framework import serializers
 
@@ -213,3 +215,47 @@ class SlotSerializer(serializers.ModelSerializer):
 
         fields = "__all__"
         model = Slot
+
+
+class UserBaseSerializer(serializers.BaseSerializer):
+    def create(self, validated_data):
+        raise NotImplementedError("UserBaseSerializer is read-only.")
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError("UserBaseSerializer is read-only.")
+
+    def to_internal_value(self, data):
+        raise NotImplementedError("UserBaseSerializer is read-only.")
+
+    def to_representation(self, instance):
+        return {
+            "first_name": instance.first_name or "",
+            "last_name": instance.last_name or "",
+            "groups": list(instance.groups.values_list("name", flat=True)),
+        }
+
+
+class AvailabilityOverviewBaseSerializer(serializers.BaseSerializer):
+    def create(self, validated_data):
+        raise NotImplementedError("AvailabilityOverviewBaseSerializer is read-only.")
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError("AvailabilityOverviewBaseSerializer is read-only.")
+
+    def to_internal_value(self, data):
+        raise NotImplementedError("AvailabilityOverviewBaseSerializer is read-only.")
+
+    def to_representation(self, instance):
+        qs = User.objects.filter(
+            Q(availabilityhours__slot=instance.day)
+            | Q(availabilityperiod__slot=instance.day)
+        )
+        serializer = UserBaseSerializer(qs, many=True)
+
+        return {
+            "cottage_hours": instance.cottage_hours,
+            "cottage_workers": instance.cottage_workers,
+            "stationary_hours": instance.stationary_hours,
+            "stationary_workers": instance.stationary_workers,
+            "workers": serializer.data,
+        }

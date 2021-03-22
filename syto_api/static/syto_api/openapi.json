@@ -907,7 +907,7 @@
     },
     "/api/v1/availability/": {
       "get": {
-        "operationId": "listTotalAvailability",
+        "operationId": "listAvailabilityOverview",
         "description": "",
         "parameters": [],
         "responses": {
@@ -917,7 +917,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TotalAvailability"
+                    "$ref": "#/components/schemas/AvailabilityOverview"
                   }
                 }
               }
@@ -1057,7 +1057,24 @@
           "slot"
         ]
       },
-      "TotalAvailability": {
+      "Worker": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AvailabilityOverview": {
         "type": "object",
         "properties": {
           "day": {
@@ -1067,8 +1084,17 @@
           "cottage_hours": {
             "type": "integer"
           },
+          "cottage_workers": {
+            "type": "integer"
+          },
           "stationary_hours": {
             "type": "integer"
+          },
+          "stationary_workers": {
+            "type": "integer"
+          },
+          "workers": {
+            "$ref": "#/components/schemas/Worker"
           }
         }
       }

@@ -15,7 +15,7 @@ urlpatterns = [
     path(f"{API_VERSION_PREFIX}/", include(router.urls)),
     path(
         f"{API_VERSION_PREFIX}/availability/",
-        views.total_availability_list_view,
+        views.availability_overview_list,
         name="total-availability-list",
     ),
     path(

@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
-  title: 'Syto API'
-  version: 'v1'
+  title: Syto API
+  version: v1
 paths:
   /api/v1/user/:
     get:
@@ -18,7 +18,7 @@ paths:
                   $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
+        - api
     post:
       operationId: createUser
       description: ''
@@ -42,18 +42,18 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
-  /api/v1/user/{id}/:
+        - api
+  '/api/v1/user/{id}/':
     get:
       operationId: retrieveUser
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this user.
+          schema:
+            type: string
       responses:
         '200':
           content:
@@ -62,17 +62,17 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
+        - api
     put:
       operationId: updateUser
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this user.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -92,17 +92,17 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
+        - api
     patch:
       operationId: partialUpdateUser
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this user.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -122,33 +122,33 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
+        - api
     delete:
       operationId: destroyUser
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this user.
+          schema:
+            type: string
       responses:
         '204':
           description: ''
       tags:
-      - api
-  /api/v1/user/{id}/toggle_is_active/:
+        - api
+  '/api/v1/user/{id}/toggle_is_active/':
     get:
       operationId: toggleIsActiveUser
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this user.
+          schema:
+            type: string
       responses:
         '200':
           content:
@@ -157,7 +157,7 @@ paths:
                 $ref: '#/components/schemas/IsActiveStatus'
           description: ''
       tags:
-      - api
+        - api
   /api/v1/slot/:
     get:
       operationId: listSlots
@@ -173,7 +173,7 @@ paths:
                   $ref: '#/components/schemas/Slot'
           description: ''
       tags:
-      - api
+        - api
     post:
       operationId: createSlot
       description: ''
@@ -197,18 +197,18 @@ paths:
                 $ref: '#/components/schemas/Slot'
           description: ''
       tags:
-      - api
-  /api/v1/slot/{day}/:
+        - api
+  '/api/v1/slot/{day}/':
     get:
       operationId: retrieveSlot
       description: ''
       parameters:
-      - name: day
-        in: path
-        required: true
-        description: A unique value identifying this slot.
-        schema:
-          type: string
+        - name: day
+          in: path
+          required: true
+          description: A unique value identifying this slot.
+          schema:
+            type: string
       responses:
         '200':
           content:
@@ -217,17 +217,17 @@ paths:
                 $ref: '#/components/schemas/Slot'
           description: ''
       tags:
-      - api
+        - api
     put:
       operationId: updateSlot
       description: ''
       parameters:
-      - name: day
-        in: path
-        required: true
-        description: A unique value identifying this slot.
-        schema:
-          type: string
+        - name: day
+          in: path
+          required: true
+          description: A unique value identifying this slot.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -247,17 +247,17 @@ paths:
                 $ref: '#/components/schemas/Slot'
           description: ''
       tags:
-      - api
+        - api
     patch:
       operationId: partialUpdateSlot
       description: ''
       parameters:
-      - name: day
-        in: path
-        required: true
-        description: A unique value identifying this slot.
-        schema:
-          type: string
+        - name: day
+          in: path
+          required: true
+          description: A unique value identifying this slot.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -277,22 +277,22 @@ paths:
                 $ref: '#/components/schemas/Slot'
           description: ''
       tags:
-      - api
+        - api
     delete:
       operationId: destroySlot
       description: ''
       parameters:
-      - name: day
-        in: path
-        required: true
-        description: A unique value identifying this slot.
-        schema:
-          type: string
+        - name: day
+          in: path
+          required: true
+          description: A unique value identifying this slot.
+          schema:
+            type: string
       responses:
         '204':
           description: ''
       tags:
-      - api
+        - api
   /api/v1/availability/hours/:
     get:
       operationId: listAvailabilityHours
@@ -308,7 +308,7 @@ paths:
                   $ref: '#/components/schemas/AvailabilityHours'
           description: ''
       tags:
-      - api
+        - api
     post:
       operationId: createAvailabilityHours
       description: ''
@@ -332,18 +332,18 @@ paths:
                 $ref: '#/components/schemas/AvailabilityHours'
           description: ''
       tags:
-      - api
-  /api/v1/availability/hours/{id}/:
+        - api
+  '/api/v1/availability/hours/{id}/':
     get:
       operationId: retrieveAvailabilityHours
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability hours.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability hours.
+          schema:
+            type: string
       responses:
         '200':
           content:
@@ -352,17 +352,17 @@ paths:
                 $ref: '#/components/schemas/AvailabilityHours'
           description: ''
       tags:
-      - api
+        - api
     put:
       operationId: updateAvailabilityHours
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability hours.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability hours.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -382,17 +382,17 @@ paths:
                 $ref: '#/components/schemas/AvailabilityHours'
           description: ''
       tags:
-      - api
+        - api
     patch:
       operationId: partialUpdateAvailabilityHours
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability hours.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability hours.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -412,22 +412,22 @@ paths:
                 $ref: '#/components/schemas/AvailabilityHours'
           description: ''
       tags:
-      - api
+        - api
     delete:
       operationId: destroyAvailabilityHours
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability hours.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability hours.
+          schema:
+            type: string
       responses:
         '204':
           description: ''
       tags:
-      - api
+        - api
   /api/v1/availability/period/:
     get:
       operationId: listAvailabilityPeriods
@@ -443,7 +443,7 @@ paths:
                   $ref: '#/components/schemas/AvailabilityPeriod'
           description: ''
       tags:
-      - api
+        - api
     post:
       operationId: createAvailabilityPeriod
       description: ''
@@ -467,18 +467,18 @@ paths:
                 $ref: '#/components/schemas/AvailabilityPeriod'
           description: ''
       tags:
-      - api
-  /api/v1/availability/period/{id}/:
+        - api
+  '/api/v1/availability/period/{id}/':
     get:
       operationId: retrieveAvailabilityPeriod
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability period.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability period.
+          schema:
+            type: string
       responses:
         '200':
           content:
@@ -487,17 +487,17 @@ paths:
                 $ref: '#/components/schemas/AvailabilityPeriod'
           description: ''
       tags:
-      - api
+        - api
     put:
       operationId: updateAvailabilityPeriod
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability period.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability period.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -517,17 +517,17 @@ paths:
                 $ref: '#/components/schemas/AvailabilityPeriod'
           description: ''
       tags:
-      - api
+        - api
     patch:
       operationId: partialUpdateAvailabilityPeriod
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability period.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability period.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -547,25 +547,25 @@ paths:
                 $ref: '#/components/schemas/AvailabilityPeriod'
           description: ''
       tags:
-      - api
+        - api
     delete:
       operationId: destroyAvailabilityPeriod
       description: ''
       parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this availability period.
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this availability period.
+          schema:
+            type: string
       responses:
         '204':
           description: ''
       tags:
-      - api
+        - api
   /api/v1/availability/:
     get:
-      operationId: listTotalAvailability
+      operationId: listAvailabilityOverview
       description: ''
       parameters: []
       responses:
@@ -575,10 +575,10 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TotalAvailability'
+                  $ref: '#/components/schemas/AvailabilityOverview'
           description: ''
       tags:
-      - api
+        - api
 components:
   schemas:
     User:
@@ -617,9 +617,9 @@ components:
           type: boolean
           writeOnly: true
       required:
-      - email
-      - first_name
-      - last_name
+        - email
+        - first_name
+        - last_name
     IsActiveStatus:
       type: object
       properties:
@@ -638,7 +638,7 @@ components:
           type: boolean
           nullable: true
       required:
-      - day
+        - day
     AvailabilityHours:
       type: object
       properties:
@@ -650,8 +650,8 @@ components:
         slot:
           type: string
       required:
-      - hours
-      - slot
+        - hours
+        - slot
     AvailabilityPeriod:
       type: object
       properties:
@@ -665,16 +665,33 @@ components:
         slot:
           type: string
       required:
-      - start
-      - end
-      - slot
-    TotalAvailability:
-          type: object
-          properties:
-            day:
-              type: string
-              format: date
-            cottage_hours:
-              type: integer
-            stationary_hours:
-              type: integer
+        - start
+        - end
+        - slot
+    Worker:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        groups:
+          type: array
+          items:
+            type: string
+    AvailabilityOverview:
+      type: object
+      properties:
+        day:
+          type: string
+          format: date
+        cottage_hours:
+          type: integer
+        cottage_workers:
+          type: integer
+        stationary_hours:
+          type: integer
+        stationary_workers:
+          type: integer
+        workers:
+          $ref: '#/components/schemas/Worker'
