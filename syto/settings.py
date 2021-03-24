@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "phonenumber_field",
     "syto_api",
+    "manifest_loader",
+    "syto_panel",
 ]
 
 
@@ -124,6 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = "static"
+
 
 # User model
 # https://docs.djangoproject.com/en/3.1/topics/auth/customizing/#substituting-a-custom-user-model
@@ -148,3 +152,9 @@ PHONENUMBER_DEFAULT_REGION = "PL"
 # https://rsinger86.github.io/drf-access-policy/
 
 DRF_ACCESS_POLICY = {"reusable_conditions": "syto_api.global_access_conditions"}
+
+
+# Django Manifest Loader
+# https://django-manifest-loader.readthedocs.io/en/latest/index.html
+
+MANIFEST_LOADER = {"output_dir": BASE_DIR / "syto_panel" / "static" / "syto_panel"}

@@ -126,6 +126,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+
 # User model
 # https://docs.djangoproject.com/en/3.1/topics/auth/customizing/#substituting-a-custom-user-model
 
