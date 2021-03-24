@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+from syto_panel.loader import VuetifyLoader
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -157,4 +159,7 @@ DRF_ACCESS_POLICY = {"reusable_conditions": "syto_api.global_access_conditions"}
 # Django Manifest Loader
 # https://django-manifest-loader.readthedocs.io/en/latest/index.html
 
-MANIFEST_LOADER = {"output_dir": BASE_DIR / "syto_panel" / "static" / "syto_panel"}
+MANIFEST_LOADER = {
+    "output_dir": BASE_DIR / "syto_panel" / "static" / "syto_panel",
+    "loader": VuetifyLoader,
+}
