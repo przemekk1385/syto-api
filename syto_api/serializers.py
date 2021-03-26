@@ -13,14 +13,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
 
+    password = serializers.CharField(write_only=True)
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     is_active = serializers.BooleanField(read_only=True)
     groups = serializers.SlugRelatedField("name", many=True, read_only=True)
 
-    date_of_birth = serializers.DateField(required=False)
-    phone_number = serializerfields.PhoneNumberField(required=False)
-    address = serializers.CharField(required=False)
+    date_of_birth = serializers.DateField(allow_null=True, required=False)
+    phone_number = serializerfields.PhoneNumberField(
+        allow_blank=True, allow_null=True, required=False
+    )
+    address = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     # extra field that doesn't go to db
     is_new = serializers.BooleanField(required=False, write_only=True)
@@ -31,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "email",
+            "password",
             "first_name",
             "last_name",
             "is_active",
