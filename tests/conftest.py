@@ -39,7 +39,7 @@ def syto_user() -> Callable:
     ) -> UserModel:
         groups = groups or []
 
-        user = UserModel.objects.create(email=email, password=password)
+        user = UserModel.objects.create(email=email, password=password, is_active=True)
         user.groups.set(
             [Group.objects.get_or_create(name=group_name)[0] for group_name in groups]
         )
