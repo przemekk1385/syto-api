@@ -36,7 +36,7 @@ class AvailabilityHoursAccessPolicy(AccessPolicy):
         },
         {
             "action": ["retrieve", "update", "partial_update", "delete"],
-            "principal": ["*"],
+            "principal": ["authenticated"],
             "effect": "allow",
             "condition": "is_owner",
         },
