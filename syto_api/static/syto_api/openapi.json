@@ -69,6 +69,28 @@
         ]
       }
     },
+    "/api/v1/user/me/": {
+      "get": {
+        "operationId": "meUser",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
     "/api/v1/user/{id}/": {
       "get": {
         "operationId": "retrieveUser",
