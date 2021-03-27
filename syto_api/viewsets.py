@@ -12,8 +12,42 @@ from .serializers import (
 )
 
 
+class UserAccessPolicy(AccessPolicy):
+
+    statements = [
+        {
+            "action": ["create"],
+            "principal": ["anonymous"],
+            "effect": "allow",
+        },
+        {
+            "action": ["retrieve", "update", "partial_update", "delete"],
+            "principal": ["authenticated"],
+            "effect": "allow",
+            "condition": "is_foreman or is_account_owner",
+        },
+        {"action": ["me"], "principal": ["authenticated"], "effect": "allow"},
+        {
+            "action": ["toggle_is_active"],
+            "principal": ["group:foreman"],
+            "effect": "allow",
+        },
+    ]
+
+    @staticmethod
+    def is_foreman(request, view, action: str) -> bool:
+        return request.user.groups.filter(name="foreman").exists()
+
+    @staticmethod
+    def is_account_owner(request, view, action: str) -> bool:
+        user = view.get_object()
+
+        return user == request.user
+
+
 class UserViewSet(viewsets.ModelViewSet):
 
+    permission_classes = [UserAccessPolicy]
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
