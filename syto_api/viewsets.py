@@ -17,6 +17,11 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
+    @action(detail=False, url_path="me", methods=["GET"])
+    def me(self, request, *args, **kwargs):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @action(detail=True, url_path="toggle_is_active", methods=["GET"])
     def toggle_is_active(self, request, *args, **kwargs):
         instance = self.get_object()
