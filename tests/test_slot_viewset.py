@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import pytest
 from django.shortcuts import reverse
 
-from syto_api.models import AvailabilityPeriod, Slot
+from syto_api.models import AvailabilityHours, AvailabilityPeriod, Slot
 
 TODAY = date.today()
 
@@ -120,7 +120,7 @@ def test_update_ok(api_client, syto_user):
 
 
 @pytest.mark.django_db
-def test_update_stationary_workers_limit_ok(api_client, syto_user):
+def test_update_workers_related_fields_ok(api_client, syto_user):
     user = syto_user(groups=["foreman"])
     api_client.force_authenticate(user)
 
@@ -131,20 +131,28 @@ def test_update_stationary_workers_limit_ok(api_client, syto_user):
     )
 
     for i in range(5):
+        AvailabilityHours.objects.create(
+            slot=slot,
+            hours=8,
+            user=syto_user(f"foo2{i}@bar.baz", groups=["cottage_worker"]),
+        )
         AvailabilityPeriod.objects.create(
             slot=slot,
             start="6:00",
             end="14:00",
-            user=syto_user(f"foo{i}@bar.baz", groups=["stationary_worker"]),
+            user=syto_user(f"foo1{i}@bar.baz", groups=["stationary_worker"]),
         )
 
     response = api_client.patch(
         reverse("syto_api:slot-detail", args=[slot.day]),
-        data=json.dumps({"stationary_workers_limit": 1}),
+        data=json.dumps(
+            {"is_open_for_cottage_workers": False, "stationary_workers_limit": 1}
+        ),
         content_type="application/json",
     )
 
     assert response.status_code == 200
+    assert not AvailabilityHours.objects.filter(slot=slot).exists()
     assert AvailabilityPeriod.objects.filter(slot=slot).count() == 1
 
 
