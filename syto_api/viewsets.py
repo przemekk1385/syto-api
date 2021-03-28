@@ -93,6 +93,13 @@ class AvailabilityHoursViewSet(viewsets.ModelViewSet):
     serializer_class = AvailabilityHoursSerializer
     queryset = AvailabilityHours.objects.all()
 
+    def get_queryset(self):
+        return (
+            AvailabilityHours.objects.filter(user=self.request.user)
+            if self.action == "list" and not self.request.user.is_foreman
+            else super().get_queryset()
+        )
+
 
 class AvailabilityPeriodAccessPolicy(AccessPolicy):
 
@@ -121,6 +128,13 @@ class AvailabilityPeriodViewSet(viewsets.ModelViewSet):
     permission_classes = [AvailabilityPeriodAccessPolicy]
     serializer_class = AvailabilityPeriodSerializer
     queryset = AvailabilityPeriod.objects.all()
+
+    def get_queryset(self):
+        return (
+            AvailabilityPeriod.objects.filter(user=self.request.user)
+            if self.action == "list" and not self.request.user.is_foreman
+            else super().get_queryset()
+        )
 
 
 class SlotAccessPolicy(AccessPolicy):
