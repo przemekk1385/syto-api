@@ -1,9 +1,53 @@
 import json
+from datetime import date, timedelta
 
 import pytest
 from django.shortcuts import reverse
 
 from syto_api.models import AvailabilityHours
+
+TODAY = date.today()
+
+
+@pytest.mark.parametrize(
+    ("groups", "results_count"),
+    [
+        (["cottage_worker"], 5),
+        (["cottage_worker", "foreman"], 15),
+    ],
+)
+@pytest.mark.django_db
+def test_list(groups, results_count, api_client, syto_user, syto_slot):
+    user = syto_user(groups=groups)
+    api_client.force_authenticate(user)
+
+    for i in range(5):
+        slot = syto_slot(
+            day=TODAY - timedelta(days=i), is_open_for_cottage_workers=True
+        )
+        AvailabilityHours.objects.create(
+            slot=slot,
+            hours=8,
+            user=syto_user(f"foo{i + 1}@bar.baz", groups=["cottage_worker"]),
+        )
+        AvailabilityHours.objects.create(
+            slot=slot,
+            hours=8,
+            user=user,
+        )
+    for i in range(5, 10):
+        AvailabilityHours.objects.create(
+            slot=syto_slot(
+                day=TODAY - timedelta(days=i), is_open_for_cottage_workers=True
+            ),
+            hours=8,
+            user=syto_user(f"foo{i + 1}@bar.baz", groups=["cottage_worker"]),
+        )
+
+    response = api_client.get(reverse("syto_api:availability-hours-list"))
+
+    assert response.status_code == 200
+    assert len(response.data) == results_count
 
 
 @pytest.mark.django_db

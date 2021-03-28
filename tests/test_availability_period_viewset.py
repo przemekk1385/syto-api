@@ -1,9 +1,52 @@
 import json
+from datetime import date, timedelta
 
 import pytest
 from django.shortcuts import reverse
 
 from syto_api.models import AvailabilityPeriod
+
+TODAY = date.today()
+
+
+@pytest.mark.parametrize(
+    ("groups", "results_count"),
+    [
+        (["stationary_worker"], 5),
+        (["stationary_worker", "foreman"], 15),
+    ],
+)
+@pytest.mark.django_db
+def test_list(groups, results_count, api_client, syto_user, syto_slot):
+    user = syto_user(groups=groups)
+    api_client.force_authenticate(user)
+
+    for i in range(5):
+        slot = syto_slot(day=TODAY - timedelta(days=i), stationary_workers_limit=99)
+        AvailabilityPeriod.objects.create(
+            slot=slot,
+            start="6:00",
+            end="14:00",
+            user=syto_user(f"foo{i + 1}@bar.baz", groups=["stationary_worker"]),
+        )
+        AvailabilityPeriod.objects.create(
+            slot=slot,
+            start="6:00",
+            end="14:00",
+            user=user,
+        )
+    for i in range(5, 10):
+        AvailabilityPeriod.objects.create(
+            slot=syto_slot(day=TODAY - timedelta(days=i), stationary_workers_limit=99),
+            start="6:00",
+            end="14:00",
+            user=syto_user(f"foo{i + 1}@bar.baz", groups=["stationary_worker"]),
+        )
+
+    response = api_client.get(reverse("syto_api:availability-period-list"))
+
+    assert response.status_code == 200
+    assert len(response.data) == results_count
 
 
 @pytest.mark.django_db
