@@ -1,8 +1,3 @@
-"""
-TODO:
-- tests for failed update
-"""
-
 import json
 
 import pytest
