@@ -122,7 +122,7 @@ class SlotAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": ["list", "retrieve"],
+            "action": ["list"],
             "principal": ["group:cottage_worker", "group:stationary_worker"],
             "effect": "allow",
         },
