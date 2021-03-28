@@ -36,7 +36,7 @@ def test_create_ok(api_client, syto_user):
 )
 @pytest.mark.django_db
 def test_create_failed(groups, api_client, syto_user):
-    user = syto_user(groups=["stationary_worker"])
+    user = syto_user(groups=groups)
     api_client.force_authenticate(user)
 
     payload = {
