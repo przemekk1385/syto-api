@@ -1,5 +1,5 @@
 import json
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 from django.shortcuts import reverse
@@ -7,6 +7,37 @@ from django.shortcuts import reverse
 from syto_api.models import AvailabilityPeriod, Slot
 
 TODAY = date.today()
+
+
+@pytest.mark.parametrize(
+    ("groups",),
+    [
+        (["cottage_worker"],),
+        (["stationary_worker"],),
+    ],
+)
+@pytest.mark.django_db
+def test_list(groups, api_client, syto_user):
+    for i in range(5):
+        Slot.objects.create(day=TODAY - timedelta(days=i), stationary_workers_limit=5)
+    for i in range(5, 10):
+        Slot.objects.create(
+            day=TODAY - timedelta(days=i), is_open_for_cottage_workers=True
+        )
+    for i in range(10, 15):
+        Slot.objects.create(
+            day=TODAY - timedelta(days=i),
+            stationary_workers_limit=5,
+            is_open_for_cottage_workers=True,
+        )
+
+    user = syto_user(groups=groups)
+    api_client.force_authenticate(user)
+
+    response = api_client.get(reverse("syto_api:slot-list"))
+
+    assert response.status_code == 200
+    assert len(response.data) == 10
 
 
 @pytest.mark.django_db
