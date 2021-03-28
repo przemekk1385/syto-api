@@ -74,6 +74,11 @@ class AvailabilityHoursAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
+            "action": ["list"],
+            "principal": ["group:foreman", "group:cottage_worker"],
+            "effect": "allow",
+        },
+        {
             "action": ["retrieve", "update", "partial_update", "delete"],
             "principal": ["authenticated"],
             "effect": "allow",
@@ -95,6 +100,11 @@ class AvailabilityPeriodAccessPolicy(AccessPolicy):
         {
             "action": ["create"],
             "principal": ["group:stationary_worker"],
+            "effect": "allow",
+        },
+        {
+            "action": ["list"],
+            "principal": ["group:foreman", "group:stationary_worker"],
             "effect": "allow",
         },
         {
