@@ -12,7 +12,15 @@ class UserAdmin(BaseUserAdmin):
         (None, {"fields": ("email", "password")}),
         (
             _("Personal info"),
-            {"fields": ("first_name", "last_name", "date_of_birth", "evidence_number")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "date_of_birth",
+                    "phone_number",
+                    "address",
+                )
+            },
         ),
         (
             _("Permissions"),
