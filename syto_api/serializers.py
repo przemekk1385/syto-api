@@ -1,4 +1,3 @@
-import abc
 from datetime import timedelta
 
 from django.contrib.auth.models import Group
