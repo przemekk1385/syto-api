@@ -46,3 +46,4 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(models.AvailabilityHours)
 admin.site.register(models.AvailabilityPeriod)
+admin.site.register(models.Slot)
