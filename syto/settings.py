@@ -140,7 +140,13 @@ AUTH_USER_MODEL = "syto_api.User"
 # Django REST Framework
 # https://www.django-rest-framework.org
 
-REST_FRAMEWORK = {"DATETIME_FORMAT": "%Y-%m-%d %H:%M", "TIME_FORMAT": "%H:%M"}
+REST_FRAMEWORK = {
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "TIME_FORMAT": "%H:%M",
+}
 
 
 # django-phonenumber-field
