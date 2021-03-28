@@ -21,7 +21,7 @@ class UserAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": ["retrieve", "update", "partial_update", "delete"],
+            "action": ["retrieve", "update", "partial_update", "destroy"],
             "principal": ["authenticated"],
             "effect": "allow",
             "condition": "is_foreman or is_account_owner",
@@ -79,7 +79,7 @@ class AvailabilityHoursAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": ["retrieve", "update", "partial_update", "delete"],
+            "action": ["retrieve", "update", "partial_update", "destroy"],
             "principal": ["authenticated"],
             "effect": "allow",
             "condition": "is_owner",
@@ -115,7 +115,7 @@ class AvailabilityPeriodAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": ["retrieve", "update", "partial_update", "delete"],
+            "action": ["retrieve", "update", "partial_update", "destroy"],
             "principal": ["authenticated"],
             "effect": "allow",
             "condition": "is_owner",
