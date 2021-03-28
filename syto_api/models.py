@@ -80,6 +80,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
 
     @property
+    def is_foreman(self):
+        return self.groups.filter(name="foreman").exists()
+
+    @property
     def is_cottage_worker(self):
         return self.groups.filter(name="cottage_worker").exists()
 
