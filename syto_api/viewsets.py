@@ -134,3 +134,12 @@ class SlotViewSet(viewsets.ModelViewSet):
     permission_classes = [SlotAccessPolicy]
     serializer_class = SlotSerializer
     queryset = Slot.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.is_stationary_worker:
+            qs = Slot.objects.filter(stationary_workers_limit__gt=0)
+        elif self.request.user.is_cottage_worker:
+            qs = Slot.objects.filter(is_open_for_cottage_workers=True)
+        else:
+            qs = super().get_queryset()
+        return qs

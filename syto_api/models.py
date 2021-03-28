@@ -79,6 +79,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
 
+    @property
+    def is_cottage_worker(self):
+        return self.groups.filter(name="cottage_worker").exists()
+
+    @property
+    def is_stationary_worker(self):
+        return self.groups.filter(name="stationary_worker").exists()
+
     def __repr__(self):
         return "<User email={} groups=[{}]>".format(
             self.email, ", ".join(self.groups.values_list("name", flat=True))
