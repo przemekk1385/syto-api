@@ -137,11 +137,16 @@ class AvailabilityHours(models.Model):
     hours = models.IntegerField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = _("Availability hours")
+
     def __repr__(self):
-        return "<AvailabilityHours day={} hours={}>".format(self.slot.day, self.hours)
+        return "<AvailabilityHours user={} day={} hours={}>".format(
+            self.user, self.slot.day, self.hours
+        )
 
     def __str__(self):
-        return _("{}, {} hours").format(self.slot.day, self.hours)
+        return _("{}, {}, {} hours").format(self.user, self.slot.day, self.hours)
 
 
 class AvailabilityPeriodQuerySet(models.QuerySet):
@@ -170,9 +175,11 @@ class AvailabilityPeriod(models.Model):
         return "{} {}".format(self.slot.day, self.end.strftime("%H:%M"))
 
     def __repr__(self):
-        return "<AvailabilityPeriod start={} end={}>".format(
-            self.start_datetime, self.end_datetime
+        return "<AvailabilityPeriod user={} start={} end={}>".format(
+            self.user, self.start_datetime, self.end_datetime
         )
 
     def __str__(self):
-        return _("from {} to {}").format(self.start_datetime, self.end_datetime)
+        return _("{}, from {} to {}").format(
+            self.user, self.start_datetime, self.end_datetime
+        )
