@@ -80,7 +80,7 @@ def test_me_ok(api_client, syto_user):
 def test_me_forbidden(api_client):
     response = api_client.get(reverse("syto_api:user-me"))
 
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 @pytest.mark.parametrize(
