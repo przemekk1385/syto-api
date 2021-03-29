@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+from syto_panel.loader import VuetifyLoader
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,7 +43,10 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "phonenumber_field",
     "syto_api",
+    "manifest_loader",
+    "syto_panel",
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -70,8 +75,6 @@ TEMPLATES = [
         },
     },
 ]
-
-AUTH_USER_MODEL = "syto_api.User"
 
 
 WSGI_APPLICATION = "syto.wsgi.application"
@@ -110,13 +113,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
+DATE_FORMAT = "Y-m-d"
+
+DATE_INPUT_FORMATS = ["%Y-%m-%d"]
+
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -125,6 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = "static"
 
 
 # User model
@@ -136,7 +144,17 @@ AUTH_USER_MODEL = "syto_api.User"
 # Django REST Framework
 # https://www.django-rest-framework.org
 
-REST_FRAMEWORK = {"DATETIME_FORMAT": "%Y-%m-%d %H:%M", "TIME_FORMAT": "%H:%M"}
+REST_FRAMEWORK = {
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M",
+    "DATETIME_INPUT_FORMATS": ["%Y-%m-%d %H:%M"],
+    "DATE_FORMAT": "%Y-%m-%d",
+    "DATE_INPUT_FORMATS": ["%Y-%m-%d"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "TIME_FORMAT": "%H:%M",
+    "TIME_INPUT_FORMATS": ["%H:%M"],
+}
 
 
 # django-phonenumber-field
@@ -150,3 +168,12 @@ PHONENUMBER_DEFAULT_REGION = "PL"
 # https://rsinger86.github.io/drf-access-policy/
 
 DRF_ACCESS_POLICY = {"reusable_conditions": "syto_api.global_access_conditions"}
+
+
+# Django Manifest Loader
+# https://django-manifest-loader.readthedocs.io/en/latest/index.html
+
+MANIFEST_LOADER = {
+    "output_dir": BASE_DIR / "syto_panel" / "static" / "syto_panel",
+    "loader": VuetifyLoader,
+}
