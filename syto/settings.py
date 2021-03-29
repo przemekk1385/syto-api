@@ -115,13 +115,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DATE_FORMAT = "Y-m-d"
 
+DATE_INPUT_FORMATS = ["%Y-%m-%d"]
+
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -144,10 +146,14 @@ AUTH_USER_MODEL = "syto_api.User"
 
 REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y-%m-%d %H:%M",
+    "DATETIME_INPUT_FORMATS": ["%Y-%m-%d %H:%M"],
+    "DATE_FORMAT": "%Y-%m-%d",
+    "DATE_INPUT_FORMATS": ["%Y-%m-%d"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
     "TIME_FORMAT": "%H:%M",
+    "TIME_INPUT_FORMATS": ["%H:%M"],
 }
 
 
