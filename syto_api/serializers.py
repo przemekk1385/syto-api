@@ -256,6 +256,7 @@ class AvailabilityOverviewBaseSerializer(serializers.BaseSerializer):
         serializer = UserBaseSerializer(qs, many=True)
 
         return {
+            "day": instance.day,
             "cottage_hours": instance.cottage_hours,
             "cottage_workers": instance.cottage_workers,
             "stationary_hours": instance.stationary_hours,
