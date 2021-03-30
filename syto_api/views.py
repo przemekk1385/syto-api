@@ -31,7 +31,7 @@ def availability_overview_list(_):
         cottage_workers=Count("availabilityhours"),
         stationary_hours=Coalesce(Subquery(total_timedelta) / 10 ** 6 / 3600, 0),
         stationary_workers=Subquery(stationary_workers),
-    )
+    ).order_by("-day")
 
     serializer = AvailabilityOverviewBaseSerializer(qs, many=True)
 
