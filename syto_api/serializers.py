@@ -210,14 +210,16 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
         return val
 
 
-class SlotSerializer(serializers.ModelSerializer):
-
-    id = serializers.IntegerField(read_only=True)
-
+class SlotCreateSerializer(serializers.ModelSerializer):
     class Meta:
 
         fields = "__all__"
         model = Slot
+
+
+class SlotSerializer(SlotCreateSerializer):
+
+    day = serializers.DateField(read_only=True)
 
 
 class UserBaseSerializer(serializers.BaseSerializer):

@@ -7,6 +7,7 @@ from .models import AvailabilityHours, AvailabilityPeriod, Slot, User
 from .serializers import (
     AvailabilityHoursSerializer,
     AvailabilityPeriodSerializer,
+    SlotCreateSerializer,
     SlotSerializer,
     UserSerializer,
 )
@@ -167,3 +168,10 @@ class SlotViewSet(viewsets.ModelViewSet):
         else:
             qs = super().get_queryset()
         return qs
+
+    def get_serializer_class(self):
+        return (
+            SlotCreateSerializer
+            if self.action == "create"
+            else super().get_serializer_class()
+        )
