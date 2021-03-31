@@ -279,7 +279,7 @@
     "/api/v1/slot/": {
       "get": {
         "operationId": "listSlots",
-        "description": "",
+        "description": "List slots available for current user, for members of stationary_worker or cottage_worker groups.",
         "parameters": [],
         "responses": {
           "200": {
@@ -325,6 +325,28 @@
         },
         "responses": {
           "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Slot"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/v1/slot/all/": {
+      "get": {
+        "operationId": "allSlot",
+        "description": "List all slots, for members of foreman group.",
+        "parameters": [],
+        "responses": {
+          "200": {
             "content": {
               "application/json": {
                 "schema": {
