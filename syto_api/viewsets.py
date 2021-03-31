@@ -160,13 +160,22 @@ class SlotViewSet(viewsets.ModelViewSet):
     serializer_class = SlotSerializer
     queryset = Slot.objects.all()
 
+    @action(detail=False, url_path="all", methods=["GET"])
+    def all(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
-        if self.request.user.is_stationary_worker:
+        qs = super().get_queryset()
+
+        if self.action != "list":
+            pass
+        elif self.request.user.is_stationary_worker:
             qs = Slot.objects.filter(stationary_workers_limit__gt=0)
         elif self.request.user.is_cottage_worker:
             qs = Slot.objects.filter(is_open_for_cottage_workers=True)
         else:
-            qs = super().get_queryset()
+            qs = None
+
         return qs
 
     def get_serializer_class(self):
