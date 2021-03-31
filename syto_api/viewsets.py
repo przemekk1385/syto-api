@@ -54,7 +54,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, url_path="me", methods=["GET"])
     def me(self, request, *args, **kwargs):
-        serializer = UserSerializer(request.user)
+        serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, url_path="toggle_is_active", methods=["GET"])
