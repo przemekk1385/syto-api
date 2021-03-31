@@ -168,7 +168,7 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             attrs.setdefault("slot", self.instance.slot)
             attrs.setdefault("user", self.instance.user)
 
-        errors = {"non_field_errors": [], "slot": [], "user": []}
+        errors = {NON_FIELD_ERRORS_KEY: [], "slot": [], "user": []}
         start, end, slot, user = (
             attrs["start"],
             attrs["end"],
@@ -180,13 +180,15 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             hours=start.hour, minutes=start.minute
         )
         if td.days >= 0 and td.seconds // 3600 > 16:
-            errors["non_field_errors"].append("Maximum allowed number of hours is 16.")
+            errors[NON_FIELD_ERRORS_KEY].append(
+                "Maximum allowed number of hours is 16."
+            )
 
         if start >= end:
-            errors["non_field_errors"].append("End must be after start.")
+            errors[NON_FIELD_ERRORS_KEY].append("End must be after start.")
 
         if start.minute != end.minute:
-            errors["non_field_errors"].append("Only full number of hours is allowed.")
+            errors[NON_FIELD_ERRORS_KEY].append("Only full number of hours is allowed.")
 
         if (
             slot.availabilityperiod_set.exclude(id=getattr(self.instance, "id", None))
