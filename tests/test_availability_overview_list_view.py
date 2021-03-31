@@ -46,14 +46,14 @@ def test_get(rf, syto_user, syto_slot):
 
     assert response.status_code == 200
     assert len(response.data) == 20
-    assert response.data[0]["cottage_hours"] == 16
-    assert response.data[0]["cottage_workers"] == 2
-    assert response.data[0]["stationary_hours"] == 0
-    assert response.data[0]["stationary_workers"] == 0
     assert response.data[10]["cottage_hours"] == 16
     assert response.data[10]["cottage_workers"] == 2
-    assert response.data[10]["stationary_hours"] == 16
-    assert response.data[10]["stationary_workers"] == 2
+    assert response.data[10]["stationary_hours"] == 0
+    assert response.data[10]["stationary_workers"] == 0
+    assert response.data[0]["cottage_hours"] == 16
+    assert response.data[0]["cottage_workers"] == 2
+    assert response.data[0]["stationary_hours"] == 16
+    assert response.data[0]["stationary_workers"] == 2
 
 
 def test_post(rf):
