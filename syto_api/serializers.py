@@ -1,11 +1,18 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from phonenumber_field import serializerfields
 from rest_framework import serializers
+from rest_framework.settings import api_settings
 
 from .models import AvailabilityHours, AvailabilityPeriod, Slot, User
+
+NON_FIELD_ERRORS_KEY = (
+    getattr(settings, "REST_FRAMEWORK", {}).get("NON_FIELD_ERRORS_KEY")
+    or api_settings.NON_FIELD_ERRORS_KEY
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -215,6 +222,23 @@ class SlotCreateSerializer(serializers.ModelSerializer):
 
         fields = "__all__"
         model = Slot
+
+    def validate(self, attrs):
+        if not attrs.get("stationary_workers_limit") and not attrs.get(
+            "is_open_for_cottage_workers"
+        ):
+            raise serializers.ValidationError(
+                {
+                    NON_FIELD_ERRORS_KEY: [
+                        (
+                            "Either stationary_workers_limit or"
+                            " is_open_for_cottage_workers is required."
+                        )
+                    ]
+                }
+            )
+
+        return attrs
 
 
 class SlotSerializer(SlotCreateSerializer):
