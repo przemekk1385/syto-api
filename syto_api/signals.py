@@ -8,29 +8,36 @@ from .models import Slot
 
 
 @receiver(post_save, sender=Slot)
-def adjust_signed_in_workers_count(sender, instance=None, created=False, **kwargs):
-    @transaction.atomic
-    def _delete_availabilityperiod_set() -> None:
-        limit = instance.stationary_workers_limit
-        ids = instance.availabilityperiod_set.values_list("id", flat=True)[limit:]
-        instance.availabilityperiod_set.filter(id__in=ids).delete()
-
-    def _delete_availabilityhours_set() -> None:
+def adjust_signed_in_cottage_workers_number(
+    sender, instance=None, created=False, **kwargs
+):
+    def _delete() -> None:
         instance.availabilityhours_set.all().delete()
-
-    if (
-        not created
-        and (instance.stationary_workers_limit or 0)
-        < instance.availabilityperiod_set.count()
-    ):
-        _delete_availabilityperiod_set()
 
     if (
         not created
         and not instance.is_open_for_cottage_workers
         and instance.availabilityhours_set.exists()
     ):
-        _delete_availabilityhours_set()
+        _delete()
+
+
+@receiver(post_save, sender=Slot)
+def adjust_signed_in_stationary_workers_number(
+    sender, instance=None, created=False, **kwargs
+):
+    @transaction.atomic
+    def _delete() -> None:
+        limit = instance.stationary_workers_limit
+        ids = instance.availabilityperiod_set.values_list("id", flat=True)[limit:]
+        instance.availabilityperiod_set.filter(id__in=ids).delete()
+
+    if (
+        not created
+        and (instance.stationary_workers_limit or 0)
+        < instance.availabilityperiod_set.count()
+    ):
+        _delete()
 
 
 # https://www.django-rest-framework.org/api-guide/authentication/#generating-tokens
