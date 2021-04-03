@@ -17,6 +17,11 @@ class UserAccessPolicy(AccessPolicy):
 
     statements = [
         {
+            "action": ["list"],
+            "principal": ["group:foreman"],
+            "effect": "allow",
+        },
+        {
             "action": ["create"],
             "principal": ["anonymous"],
             "effect": "allow",
