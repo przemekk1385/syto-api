@@ -55,7 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     permission_classes = [UserAccessPolicy]
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.exclude(is_superuser=True)
 
     @action(detail=False, url_path="me", methods=["GET"])
     def me(self, request, *args, **kwargs):
