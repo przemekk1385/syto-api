@@ -138,7 +138,7 @@ class AvailabilityPeriodViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return (
             AvailabilityPeriod.objects.filter(user=self.request.user)
-            if self.action == "list" and not self.request.user.is_foreman
+            if self.action == "list"
             else super().get_queryset()
         )
 
