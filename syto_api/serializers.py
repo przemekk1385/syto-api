@@ -155,11 +155,18 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    worker = serializers.SerializerMethodField()
 
     class Meta:
 
         fields = "__all__"
         model = AvailabilityPeriod
+
+    @staticmethod
+    def get_worker(obj):
+        serializer = UserBaseSerializer(obj.user)
+
+        return serializer.data
 
     def validate(self, attrs):
         if self.instance:
