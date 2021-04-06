@@ -308,17 +308,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Slot"
+                "$ref": "#/components/schemas/SlotCreate"
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/Slot"
+                "$ref": "#/components/schemas/SlotCreate"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Slot"
+                "$ref": "#/components/schemas/SlotCreate"
               }
             }
           }
@@ -328,7 +328,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Slot"
+                  "$ref": "#/components/schemas/SlotCreate"
                 }
               }
             },
@@ -796,6 +796,28 @@
         ]
       }
     },
+    "/api/v1/availability/period/all/": {
+      "get": {
+        "operationId": "allAvailabilityPeriod",
+        "description": "List all availability periods, for members of foreman group.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityPeriod"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
     "/api/v1/availability/period/{id}/": {
       "get": {
         "operationId": "retrieveAvailabilityPeriod",
@@ -989,6 +1011,10 @@
             "format": "email",
             "maxLength": 254
           },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
           "first_name": {
             "type": "string"
           },
@@ -1008,13 +1034,16 @@
           },
           "date_of_birth": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "nullable": true
           },
           "phone_number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "address": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "is_new": {
             "type": "boolean",
@@ -1027,19 +1056,12 @@
         },
         "required": [
           "email",
+          "password",
           "first_name",
           "last_name"
         ]
       },
-      "IsActiveStatus": {
-        "type": "object",
-        "properties": {
-          "is_active": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Slot": {
+      "SlotCreate": {
         "type": "object",
         "properties": {
           "day": {
@@ -1058,6 +1080,24 @@
         "required": [
           "day"
         ]
+      },
+      "Slot": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date",
+            "readOnly": true
+          },
+          "stationary_workers_limit": {
+            "type": "integer",
+            "nullable": true
+          },
+          "is_open_for_cottage_workers": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
       },
       "AvailabilityHours": {
         "type": "object",
@@ -1085,6 +1125,9 @@
             "type": "integer",
             "readOnly": true
           },
+          "worker": {
+            "$ref": "#/components/schemas/Worker"
+          },
           "start": {
             "type": "string"
           },
@@ -1101,20 +1144,12 @@
           "slot"
         ]
       },
-      "Worker": {
+      "IsActiveStatus": {
         "type": "object",
         "properties": {
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "is_active": {
+            "type": "boolean",
+            "readOnly": true
           }
         }
       },
@@ -1123,22 +1158,50 @@
         "properties": {
           "day": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "readOnly": true
           },
           "cottage_hours": {
-            "type": "integer"
+            "type": "integer",
+            "readOnly": true
           },
           "cottage_workers": {
-            "type": "integer"
+            "type": "integer",
+            "readOnly": true
           },
           "stationary_hours": {
-            "type": "integer"
+            "type": "integer",
+            "readOnly": true
           },
           "stationary_workers": {
-            "type": "integer"
+            "type": "integer",
+            "readOnly": true
           },
           "workers": {
-            "$ref": "#/components/schemas/Worker"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Worker"
+            }
+          }
+        }
+      },
+      "Worker": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "last_name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "readOnly": true
+            }
           }
         }
       }

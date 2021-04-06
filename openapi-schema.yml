@@ -56,7 +56,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
+        - api
   '/api/v1/user/{id}/':
     get:
       operationId: retrieveUser
@@ -175,7 +175,9 @@ paths:
   /api/v1/slot/:
     get:
       operationId: listSlots
-      description: 'List slots available for current user, for members of stationary_worker or cottage_worker groups.'
+      description: >-
+        List slots available for current user, for members of stationary_worker
+        or cottage_worker groups.
       parameters: []
       responses:
         '200':
@@ -196,23 +198,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Slot'
+              $ref: '#/components/schemas/SlotCreate'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Slot'
+              $ref: '#/components/schemas/SlotCreate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Slot'
+              $ref: '#/components/schemas/SlotCreate'
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Slot'
+                $ref: '#/components/schemas/SlotCreate'
           description: ''
       tags:
         - api
-  '/api/v1/slot/all/':
+  /api/v1/slot/all/:
     get:
       operationId: allSlot
       description: 'List all slots, for members of foreman group.'
@@ -225,7 +227,7 @@ paths:
                 $ref: '#/components/schemas/Slot'
           description: ''
       tags:
-      - api
+        - api
   '/api/v1/slot/{day}/':
     get:
       operationId: retrieveSlot
@@ -496,6 +498,20 @@ paths:
           description: ''
       tags:
         - api
+  /api/v1/availability/period/all/:
+    get:
+      operationId: allAvailabilityPeriod
+      description: 'List all availability periods, for members of foreman group.'
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityPeriod'
+          description: ''
+      tags:
+        - api
   '/api/v1/availability/period/{id}/':
     get:
       operationId: retrieveAvailabilityPeriod
@@ -619,6 +635,9 @@ components:
           type: string
           format: email
           maxLength: 254
+        password:
+          type: string
+          writeOnly: true
         first_name:
           type: string
         last_name:
@@ -634,10 +653,13 @@ components:
         date_of_birth:
           type: string
           format: date
+          nullable: true
         phone_number:
           type: string
+          nullable: true
         address:
           type: string
+          nullable: true
         is_new:
           type: boolean
           writeOnly: true
@@ -646,14 +668,10 @@ components:
           writeOnly: true
       required:
         - email
+        - password
         - first_name
         - last_name
-    IsActiveStatus:
-      type: object
-      properties:
-        is_active:
-          type: boolean
-    Slot:
+    SlotCreate:
       type: object
       properties:
         day:
@@ -667,6 +685,19 @@ components:
           nullable: true
       required:
         - day
+    Slot:
+      type: object
+      properties:
+        day:
+          type: string
+          format: date
+          readOnly: true
+        stationary_workers_limit:
+          type: integer
+          nullable: true
+        is_open_for_cottage_workers:
+          type: boolean
+          nullable: true
     AvailabilityHours:
       type: object
       properties:
@@ -686,6 +717,8 @@ components:
         id:
           type: integer
           readOnly: true
+        worker:
+          $ref: '#/components/schemas/Worker'
         start:
           type: string
         end:
@@ -696,30 +729,46 @@ components:
         - start
         - end
         - slot
-    Worker:
+    IsActiveStatus:
       type: object
       properties:
-        first_name:
-          type: string
-        last_name:
-          type: string
-        groups:
-          type: array
-          items:
-            type: string
+        is_active:
+          type: boolean
+          readOnly: true
     AvailabilityOverview:
       type: object
       properties:
         day:
           type: string
           format: date
+          readOnly: true
         cottage_hours:
           type: integer
+          readOnly: true
         cottage_workers:
           type: integer
+          readOnly: true
         stationary_hours:
           type: integer
+          readOnly: true
         stationary_workers:
           type: integer
+          readOnly: true
         workers:
-          $ref: '#/components/schemas/Worker'
+          type: array
+          items:
+            $ref: '#/components/schemas/Worker'
+    Worker:
+      type: object
+      properties:
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        groups:
+          type: array
+          items:
+            type: string
+            readOnly: true
