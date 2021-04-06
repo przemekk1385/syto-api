@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -176,16 +176,18 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             attrs["user"],
         )
 
-        td = timedelta(hours=end.hour, minutes=end.minute) - timedelta(
-            hours=start.hour, minutes=start.minute
+        td = datetime(
+            slot.day.year, slot.day.month, slot.day.day, end.hour, end.minute
+        ) - datetime(
+            slot.day.year, slot.day.month, slot.day.day, start.hour, start.minute
         )
-        if td.days >= 0 and td.seconds // 3600 > 16:
+        if start >= end:
+            td += timedelta(days=1)
+
+        if td.seconds // 3600 > 16:
             errors[NON_FIELD_ERRORS_KEY].append(
                 "Maximum allowed number of hours is 16."
             )
-
-        if start >= end:
-            errors[NON_FIELD_ERRORS_KEY].append("End must be after start.")
 
         if start.minute != end.minute:
             errors[NON_FIELD_ERRORS_KEY].append("Only full number of hours is allowed.")

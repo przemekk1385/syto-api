@@ -9,16 +9,9 @@ from syto_api.models import AvailabilityPeriod
 TODAY = date.today()
 
 
-@pytest.mark.parametrize(
-    ("groups", "results_count"),
-    [
-        (["stationary_worker"], 5),
-        (["stationary_worker", "foreman"], 15),
-    ],
-)
 @pytest.mark.django_db
-def test_list(groups, results_count, api_client, syto_user, syto_slot):
-    user = syto_user(groups=groups)
+def test_list(api_client, syto_user, syto_slot):
+    user = syto_user(groups=["stationary_worker"])
     api_client.force_authenticate(user)
 
     for i in range(5):
@@ -46,7 +39,7 @@ def test_list(groups, results_count, api_client, syto_user, syto_slot):
     response = api_client.get(reverse("syto_api:availability-period-list"))
 
     assert response.status_code == 200
-    assert len(response.data) == results_count
+    assert len(response.data) == 5
 
 
 @pytest.mark.django_db

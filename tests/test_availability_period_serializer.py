@@ -4,15 +4,22 @@ from syto_api.models import AvailabilityPeriod
 from syto_api.serializers import AvailabilityPeriodSerializer
 
 
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [
+        ("6:00", "14:00"),
+        ("22:00", "6:00"),
+    ],
+)
 @pytest.mark.django_db
-def test_valid_data(rf, syto_user, syto_slot):
+def test_valid_data(start, end, rf, syto_user, syto_slot):
     request = rf.post("foo")
     request.user = syto_user()
 
     data = {
         "slot": syto_slot(stationary_workers_limit=1).day,
-        "start": "6:00",
-        "end": "14:00",
+        "start": start,
+        "end": end,
     }
 
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
@@ -23,8 +30,8 @@ def test_valid_data(rf, syto_user, syto_slot):
 @pytest.mark.parametrize(
     ("start", "end", "error_message"),
     [
-        ("14:00", "6:00", "End must be after start."),
         ("6:00", "23:00", "Maximum allowed number of hours is 16."),
+        ("18:00", "11:00", "Maximum allowed number of hours is 16."),
         ("6:00", "13:30", "Only full number of hours is allowed."),
     ],
 )
