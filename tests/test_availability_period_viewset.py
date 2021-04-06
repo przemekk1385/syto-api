@@ -139,3 +139,30 @@ def test_update_failed(api_client, syto_user, syto_slot):
     )
 
     assert response.status_code == 403
+
+
+@pytest.mark.parametrize(
+    ("groups", "status"),
+    [
+        (["cottage_worker"], 403),
+        (["stationary_worker"], 403),
+        (["foreman"], 200),
+    ],
+)
+@pytest.mark.django_db
+def test_all(groups, status, api_client, syto_user, syto_slot):
+    user = syto_user(groups=groups)
+    api_client.force_authenticate(user)
+
+    for i in range(5):
+        slot = syto_slot(day=TODAY - timedelta(days=i), stationary_workers_limit=99)
+        AvailabilityPeriod.objects.create(
+            slot=slot,
+            start="6:00",
+            end="14:00",
+            user=syto_user(f"foo{i + 1}@bar.baz", groups=["stationary_worker"]),
+        )
+
+    response = api_client.get(reverse("syto_api:availability-period-all"))
+
+    assert response.status_code == status
