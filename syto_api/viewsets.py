@@ -126,6 +126,11 @@ class AvailabilityPeriodAccessPolicy(AccessPolicy):
             "effect": "allow",
             "condition": "is_owner",
         },
+        {
+            "action": ["all"],
+            "principal": ["group:foreman"],
+            "effect": "allow",
+        },
     ]
 
 
@@ -134,6 +139,10 @@ class AvailabilityPeriodViewSet(viewsets.ModelViewSet):
     permission_classes = [AvailabilityPeriodAccessPolicy]
     serializer_class = AvailabilityPeriodSerializer
     queryset = AvailabilityPeriod.objects.all()
+
+    @action(detail=False, url_path="all", methods=["GET"])
+    def all(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
         return (
