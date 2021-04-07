@@ -1110,7 +1110,8 @@
             "type": "integer"
           },
           "slot": {
-            "type": "string"
+            "type": "string",
+            "format": "date"
           }
         },
         "required": [
@@ -1129,13 +1130,16 @@
             "$ref": "#/components/schemas/Worker"
           },
           "start": {
-            "type": "string"
+            "type": "string",
+            "format": "datetime"
           },
           "end": {
-            "type": "string"
+            "type": "string",
+            "format": "datetime"
           },
           "slot": {
-            "type": "string"
+            "type": "string",
+            "format": "date"
           }
         },
         "required": [

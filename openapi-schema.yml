@@ -708,6 +708,7 @@ components:
           type: integer
         slot:
           type: string
+          format: date
       required:
         - hours
         - slot
@@ -721,8 +722,10 @@ components:
           $ref: '#/components/schemas/Worker'
         start:
           type: string
+          format: datetime
         end:
           type: string
+          format: datetime
         slot:
           type: string
       required:
