@@ -1,5 +1,6 @@
 import json
-from datetime import date, timedelta
+from datetime import date
+from functools import partial
 
 import pytest
 from django.shortcuts import reverse
@@ -18,16 +19,20 @@ TODAY = date.today()
     ],
 )
 @pytest.mark.django_db
-def test_list(groups, results_count, api_client, syto_user):
+def test_list(groups, results_count, syto_datetime, api_client, syto_user):
+    dt = partial(syto_datetime, **{"year": 2021, "month": 1, "day": 1})
     for i in range(5):
-        Slot.objects.create(day=TODAY - timedelta(days=i), stationary_workers_limit=5)
+        Slot.objects.create(
+            day=dt(timedelta_days=-i).date(), stationary_workers_limit=5
+        )
     for i in range(5, 10):
         Slot.objects.create(
-            day=TODAY - timedelta(days=i), is_open_for_cottage_workers=True
+            day=dt(timedelta_days=-i).date(),
+            is_open_for_cottage_workers=True,
         )
     for i in range(10, 15):
         Slot.objects.create(
-            day=TODAY - timedelta(days=i),
+            day=dt(timedelta_days=-i).date(),
             stationary_workers_limit=5,
             is_open_for_cottage_workers=True,
         )
@@ -121,12 +126,13 @@ def test_update_ok(api_client, syto_user):
 
 
 @pytest.mark.django_db
-def test_update_workers_related_fields_ok(api_client, syto_user):
+def test_update_workers_related_fields_ok(api_client, syto_datetime, syto_user):
+    dt = partial(syto_datetime, **{"year": 2021, "month": 1, "day": 1})
     user = syto_user(groups=["foreman"])
     api_client.force_authenticate(user)
 
     slot = Slot.objects.create(
-        day=TODAY,
+        day=dt().date(),
         stationary_workers_limit=5,
         is_open_for_cottage_workers=True,
     )
@@ -139,8 +145,8 @@ def test_update_workers_related_fields_ok(api_client, syto_user):
         )
         AvailabilityPeriod.objects.create(
             slot=slot,
-            start="6:00",
-            end="14:00",
+            start=dt(hour=6),
+            end=dt(hour=14),
             user=syto_user(f"foo1{i}@bar.baz", groups=["stationary_worker"]),
         )
 
@@ -194,10 +200,11 @@ def test_update_failed(groups, api_client, syto_user):
     ],
 )
 @pytest.mark.django_db
-def test_all(groups, status, api_client, syto_user):
+def test_all(groups, status, api_client, syto_datetime, syto_user):
+    dt = partial(syto_datetime, **{"year": 2021, "month": 1, "day": 1})
     for i in range(5):
         Slot.objects.create(
-            day=TODAY - timedelta(days=i),
+            day=dt(timedelta_days=-i).date(),
             stationary_workers_limit=5,
             is_open_for_cottage_workers=True,
         )

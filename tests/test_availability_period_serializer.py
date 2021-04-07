@@ -1,3 +1,5 @@
+from functools import partial
+
 import pytest
 
 from syto_api.models import AvailabilityPeriod
@@ -7,8 +9,8 @@ from syto_api.serializers import AvailabilityPeriodSerializer
 @pytest.mark.parametrize(
     ("start", "end"),
     [
-        ("6:00", "14:00"),
-        ("22:00", "6:00"),
+        ("2021-01-01 6:00", "2021-01-01 14:00"),
+        ("2021-01-01 22:00", "2021-01-02 6:00"),
     ],
 )
 @pytest.mark.django_db
@@ -30,9 +32,21 @@ def test_valid_data(start, end, rf, syto_user, syto_slot):
 @pytest.mark.parametrize(
     ("start", "end", "error_message"),
     [
-        ("6:00", "23:00", "Maximum allowed number of hours is 16."),
-        ("18:00", "11:00", "Maximum allowed number of hours is 16."),
-        ("6:00", "13:30", "Only full number of hours is allowed."),
+        (
+            "2021-01-01 6:00",
+            "2021-01-01 23:00",
+            "Maximum allowed number of hours is 16.",
+        ),
+        (
+            "2021-01-01 18:00",
+            "2021-01-02 11:00",
+            "Maximum allowed number of hours is 16.",
+        ),
+        (
+            "2021-01-01 6:00",
+            "2021-01-01 13:30",
+            "Only full number of hours is allowed.",
+        ),
     ],
 )
 @pytest.mark.django_db
@@ -62,8 +76,8 @@ def test_non_open_day(rf, syto_user, syto_slot):
 
     data = {
         "slot": syto_slot().day,
-        "start": "6:00",
-        "end": "14:00",
+        "start": "2021-01-01 6:00",
+        "end": "2021-01-01 14:00",
     }
 
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
@@ -76,19 +90,23 @@ def test_non_open_day(rf, syto_user, syto_slot):
 
 
 @pytest.mark.django_db
-def test_workers_limit_reached(rf, syto_user, syto_slot):
-    slot = syto_slot(stationary_workers_limit=1)
+def test_workers_limit_reached(rf, syto_datetime, syto_user, syto_slot):
+    dt = partial(syto_datetime, **{"year": 2020, "month": 1, "day": 1})
+    slot = syto_slot(day=dt().date(), stationary_workers_limit=1)
     user1 = syto_user("foo1@bar.baz")
     user2 = syto_user("foo2@bar.baz")
-    AvailabilityPeriod.objects.create(slot=slot, start="6:00", end="14:00", user=user1)
+
+    AvailabilityPeriod.objects.create(
+        slot=slot, start=dt(hour=6), end=dt(hour=14), user=user1
+    )
 
     request = rf.post("foo")
     request.user = user2
 
     data = {
         "slot": slot.day,
-        "start": "6:00",
-        "end": "14:00",
+        "start": "2021-01-01 6:00",
+        "end": "2021-01-01 14:00",
     }
 
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
@@ -101,18 +119,22 @@ def test_workers_limit_reached(rf, syto_user, syto_slot):
 
 
 @pytest.mark.django_db
-def test_sign_up_only_once(rf, syto_user, syto_slot):
-    slot = syto_slot(stationary_workers_limit=99)
+def test_sign_up_only_once(rf, syto_datetime, syto_user, syto_slot):
+    dt = partial(syto_datetime, **{"year": 2021, "month": 1, "day": 1})
+    slot = syto_slot(day=dt().date(), stationary_workers_limit=99)
     user = syto_user()
-    AvailabilityPeriod.objects.create(slot=slot, start="14:00", end="22:00", user=user)
+
+    AvailabilityPeriod.objects.create(
+        slot=slot, start=dt(hour=14), end=dt(hour=22), user=user
+    )
 
     request = rf.post("foo")
     request.user = user
 
     data = {
         "slot": slot.day,
-        "start": "6:00",
-        "end": "14:00",
+        "start": "2021-01-01 06:00",
+        "end": "2021-01-01 14:00",
     }
 
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})

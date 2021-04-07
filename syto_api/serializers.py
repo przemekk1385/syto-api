@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import Group
-from django.db.models import Q
+from django.db import models
+from django.db.models import Q, Sum
+from django.db.models.functions import Cast, Coalesce
 from phonenumber_field import serializerfields
 from rest_framework import serializers
 from rest_framework.settings import api_settings
@@ -286,17 +288,27 @@ class AvailabilityOverviewBaseSerializer(serializers.BaseSerializer):
         raise NotImplementedError("AvailabilityOverviewBaseSerializer is read-only.")
 
     def to_representation(self, instance):
-        qs = User.objects.filter(
+        user_qs = User.objects.filter(
             Q(availabilityhours__slot=instance.day)
             | Q(availabilityperiod__slot=instance.day)
         )
-        serializer = UserBaseSerializer(qs, many=True)
+        serializer = UserBaseSerializer(user_qs, many=True)
+
+        timedelta_qs = (
+            instance.availabilityperiod_set.with_timedelta()
+            .values("timedelta")
+            .aggregate(
+                timedelta_sum=Cast(
+                    Coalesce(Sum("timedelta"), 0), output_field=models.IntegerField()
+                )
+            )
+        )
 
         return {
             "day": instance.day,
             "cottage_hours": instance.cottage_hours,
             "cottage_workers": instance.cottage_workers,
-            "stationary_hours": instance.stationary_hours,
+            "stationary_hours": timedelta_qs["timedelta_sum"] // 10 ** 6 // 3600,
             "stationary_workers": instance.stationary_workers,
             "workers": serializer.data,
         }

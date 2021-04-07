@@ -164,24 +164,14 @@ class AvailabilityPeriod(models.Model):
     objects = AvailabilityPeriodQuerySet.as_manager()
 
     slot = models.ForeignKey(Slot, on_delete=models.CASCADE)
-    start = models.TimeField()
-    end = models.TimeField()
+    start = models.DateTimeField()
+    end = models.DateTimeField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    @property
-    def start_datetime(self):
-        return "{} {}".format(self.slot.day, self.start.strftime("%H:%M"))
-
-    @property
-    def end_datetime(self):
-        return "{} {}".format(self.slot.day, self.end.strftime("%H:%M"))
 
     def __repr__(self):
         return "<AvailabilityPeriod user={} start={} end={}>".format(
-            self.user, self.start_datetime, self.end_datetime
+            self.user, self.start, self.end
         )
 
     def __str__(self):
-        return _("{}, from {} to {}").format(
-            self.user, self.start_datetime, self.end_datetime
-        )
+        return _("{}, from {} to {}").format(self.user, self.start, self.end)
