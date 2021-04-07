@@ -185,17 +185,16 @@ class AvailabilityPeriodSerializer(serializers.ModelSerializer):
             attrs["user"],
         )
 
-        td = datetime(
-            slot.day.year, slot.day.month, slot.day.day, end.hour, end.minute
-        ) - datetime(
-            slot.day.year, slot.day.month, slot.day.day, start.hour, start.minute
-        )
-        if start >= end:
-            td += timedelta(days=1)
+        td = end - start
 
-        if td.seconds // 3600 > 16:
+        if td.days > -1 and td.seconds // 3600 > 16:
             errors[NON_FIELD_ERRORS_KEY].append(
                 "Maximum allowed number of hours is 16."
+            )
+
+        if start >= end:
+            errors[NON_FIELD_ERRORS_KEY].append(
+                "End must be at least one hour after start."
             )
 
         if start.minute != end.minute:

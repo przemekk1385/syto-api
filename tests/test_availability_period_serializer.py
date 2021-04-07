@@ -47,6 +47,11 @@ def test_valid_data(start, end, rf, syto_user, syto_slot):
             "2021-01-01 13:30",
             "Only full number of hours is allowed.",
         ),
+        (
+            "2021-01-01 22:00",
+            "2021-01-01 21:00",
+            "End must be at least one hour after start.",
+        ),
     ],
 )
 @pytest.mark.django_db
