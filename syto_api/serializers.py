@@ -287,27 +287,17 @@ class AvailabilityOverviewBaseSerializer(serializers.BaseSerializer):
         raise NotImplementedError("AvailabilityOverviewBaseSerializer is read-only.")
 
     def to_representation(self, instance):
-        user_qs = User.objects.filter(
+        qs = User.objects.filter(
             Q(availabilityhours__slot=instance.day)
             | Q(availabilityperiod__slot=instance.day)
         )
-        serializer = UserBaseSerializer(user_qs, many=True)
-
-        timedelta_qs = (
-            instance.availabilityperiod_set.with_timedelta()
-            .values("timedelta")
-            .aggregate(
-                timedelta_sum=Cast(
-                    Coalesce(Sum("timedelta"), 0), output_field=models.IntegerField()
-                )
-            )
-        )
+        serializer = UserBaseSerializer(qs, many=True)
 
         return {
             "day": instance.day,
             "cottage_hours": instance.cottage_hours,
             "cottage_workers": instance.cottage_workers,
-            "stationary_hours": timedelta_qs["timedelta_sum"] // 10 ** 6 // 3600,
+            "stationary_hours": instance.stationary_hours // 10 ** 6 // 3600,
             "stationary_workers": instance.stationary_workers,
             "workers": serializer.data,
         }
