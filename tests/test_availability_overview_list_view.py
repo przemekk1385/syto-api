@@ -39,7 +39,7 @@ def test_get(rf, syto_datetime, syto_user, syto_slot):
         AvailabilityPeriod.objects.create(
             slot=syto_slot(day=dt(timedelta_days=-i).date()),
             start=dt(hour=22, timedelta_days=-i),
-            end=dt(hour=6, timedelta_days=-i + 1),
+            end=dt(hour=8, timedelta_days=-i + 1),
             user=users[3],
         )
 
@@ -55,7 +55,7 @@ def test_get(rf, syto_datetime, syto_user, syto_slot):
     assert response.data[10]["stationary_workers"] == 0
     assert response.data[0]["cottage_hours"] == 16
     assert response.data[0]["cottage_workers"] == 2
-    assert response.data[0]["stationary_hours"] == 16
+    assert response.data[0]["stationary_hours"] == 18
     assert response.data[0]["stationary_workers"] == 2
 
 
