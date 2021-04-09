@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # django-environ
 # https://django-environ.readthedocs.io/en/latest/
 
-env = environ.Env(DEBUG=(bool, False))
+env = environ.Env(DEBUG=(bool, False), STATIC_ROOT=(str, "static"))
 env.read_env(env.str("./", ".env"))
 
 
@@ -142,7 +142,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = "static"
+STATIC_ROOT = env("STATIC_ROOT")
 
 
 # User model
