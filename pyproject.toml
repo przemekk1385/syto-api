@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "syto-api"
+name = "syto-app"
 version = "0.1.0"
 description = ""
 authors = ["Przemek Kaliś <przemek.kalis@gmail.com>"]
