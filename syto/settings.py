@@ -22,7 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # django-environ
 # https://django-environ.readthedocs.io/en/latest/
 
-env = environ.Env(DEBUG=(bool, False), STATIC_ROOT=(str, "static"))
+env = environ.Env(
+    DEBUG=(bool, False), STATIC_ROOT=(str, "static"), ALLOWED_HOSTS=(list, [])
+)
 env.read_env(env.str("./", ".env"))
 
 
@@ -35,7 +37,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 
 # Application definition
