@@ -8,14 +8,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("syto_api", "0001_initial"),
-        ("syto_api", "0002_auto_20210303_1124"),
-        ("syto_api", "0003_auto_20210309_1948"),
-        ("syto_api", "0004_auto_20210310_1905"),
-        ("syto_api", "0005_auto_20210329_1040"),
-    ]
-
     initial = True
 
     dependencies = [
