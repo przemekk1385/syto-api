@@ -102,7 +102,7 @@ class AvailabilityHoursViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return (
             AvailabilityHours.objects.filter(user=self.request.user)
-            if self.action == "list" and not self.request.user.is_foreman
+            if self.action == "list"
             else super().get_queryset()
         )
 

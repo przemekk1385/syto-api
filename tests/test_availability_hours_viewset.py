@@ -13,7 +13,7 @@ TODAY = date.today()
     ("groups", "results_count"),
     [
         (["cottage_worker"], 5),
-        (["cottage_worker", "foreman"], 15),
+        (["cottage_worker", "foreman"], 5),
     ],
 )
 @pytest.mark.django_db
