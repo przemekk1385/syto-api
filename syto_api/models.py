@@ -9,6 +9,8 @@ from django.db.models import ExpressionWrapper, F
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field import modelfields
 
+DATETIME_FORMAT = "%Y-%m-%d %H:%M"
+
 
 class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
@@ -170,8 +172,14 @@ class AvailabilityPeriod(models.Model):
 
     def __repr__(self):
         return "<AvailabilityPeriod user={} start={} end={}>".format(
-            self.user, self.start, self.end
+            self.user,
+            self.start.strftime(DATETIME_FORMAT),
+            self.end.strftime(DATETIME_FORMAT),
         )
 
     def __str__(self):
-        return _("{}, from {} to {}").format(self.user, self.start, self.end)
+        return _("{}, from {} to {}").format(
+            self.user,
+            self.start.strftime(DATETIME_FORMAT),
+            self.end.strftime(DATETIME_FORMAT),
+        )
