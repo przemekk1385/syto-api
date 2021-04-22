@@ -3,7 +3,7 @@ from functools import partial
 import pytest
 
 from syto_api.models import AvailabilityPeriod
-from syto_api.serializers import AvailabilityPeriodSerializer
+from syto_api.serializers import NON_FIELD_ERRORS_KEY, AvailabilityPeriodSerializer
 
 
 @pytest.mark.parametrize(
@@ -68,10 +68,10 @@ def test_non_field_errors(rf, start, end, error_message, syto_user, syto_slot):
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
-    assert len(serializer.errors.get("non_field_errors")) == 1
+    assert len(serializer.errors.get(NON_FIELD_ERRORS_KEY)) == 1
     assert serializer.errors.get("slot") is None
     assert serializer.errors.get("user") is None
-    assert serializer.errors["non_field_errors"][0] == error_message
+    assert serializer.errors[NON_FIELD_ERRORS_KEY][0] == error_message
 
 
 @pytest.mark.django_db
@@ -88,7 +88,7 @@ def test_non_open_day(rf, syto_user, syto_slot):
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
-    assert serializer.errors.get("non_field_errors") is None
+    assert serializer.errors.get(NON_FIELD_ERRORS_KEY) is None
     assert len(serializer.errors.get("slot")) == 1
     assert serializer.errors.get("user") is None
     assert serializer.errors["slot"][0] == "Cannot sign up for a non-open day."
@@ -117,7 +117,7 @@ def test_workers_limit_reached(rf, syto_datetime, syto_user, syto_slot):
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
-    assert serializer.errors.get("non_field_errors") is None
+    assert serializer.errors.get(NON_FIELD_ERRORS_KEY) is None
     assert len(serializer.errors.get("slot")) == 1
     assert serializer.errors.get("user") is None
     assert serializer.errors["slot"][0] == "Limit of signed up workers reached."
@@ -145,7 +145,7 @@ def test_sign_up_only_once(rf, syto_datetime, syto_user, syto_slot):
     serializer = AvailabilityPeriodSerializer(data=data, context={"request": request})
     serializer.is_valid()
 
-    assert serializer.errors.get("non_field_errors") is None
+    assert serializer.errors.get(NON_FIELD_ERRORS_KEY) is None
     assert serializer.errors.get("slot") is None
     assert len(serializer.errors.get("user")) == 1
     assert serializer.errors["user"][0] == "Worker can sign up only once for a day."
