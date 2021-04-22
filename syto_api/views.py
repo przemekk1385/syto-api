@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, F, OuterRef, Subquery, Sum
+from django.db.models import Count, OuterRef, Subquery, Sum
 from django.db.models.functions import Coalesce
 from rest_framework.decorators import api_view
 from rest_framework.response import Response

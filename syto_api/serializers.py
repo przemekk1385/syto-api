@@ -1,11 +1,9 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
-from django.db import models
-from django.db.models import Q, Sum
-from django.db.models.functions import Cast, Coalesce
+from django.db.models import Q
 from phonenumber_field import serializerfields
 from rest_framework import serializers
 from rest_framework.settings import api_settings

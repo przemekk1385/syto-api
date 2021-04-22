@@ -41,11 +41,11 @@ class UserAccessPolicy(AccessPolicy):
     ]
 
     @staticmethod
-    def is_foreman(request, view, action: str) -> bool:
+    def is_foreman(request, view, view_action: str) -> bool:
         return request.user.groups.filter(name="foreman").exists()
 
     @staticmethod
-    def is_account_owner(request, view, action: str) -> bool:
+    def is_account_owner(request, view, view_action: str) -> bool:
         user = view.get_object()
 
         return user == request.user
