@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db import models
@@ -95,6 +96,14 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(errors)
 
         return attrs
+
+    def validate_date_of_birth(self, val, *args, **kwargs):
+        if self.initial_data.get("is_new") and val > date.today() - relativedelta(
+            years=18
+        ):
+            raise serializers.ValidationError(["User must be of age."])
+
+        return val
 
 
 class AvailabilityHoursSerializer(serializers.ModelSerializer):
