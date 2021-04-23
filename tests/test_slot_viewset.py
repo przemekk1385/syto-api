@@ -191,6 +191,38 @@ def test_update_failed(groups, api_client, syto_user):
     assert response.status_code == 403
 
 
+@pytest.mark.django_db
+def test_delete(api_client, syto_datetime, syto_user):
+    dt = partial(syto_datetime, **{"year": 2021, "month": 1, "day": 1})
+    user = syto_user(groups=["foreman"])
+    api_client.force_authenticate(user)
+
+    slot = Slot.objects.create(
+        day=dt().date(),
+        stationary_workers_limit=999,
+        is_open_for_cottage_workers=True,
+    )
+
+    for i in range(5):
+        AvailabilityHours.objects.create(
+            slot=slot,
+            hours=8,
+            user=syto_user(f"foo2{i}@bar.baz", groups=["cottage_worker"]),
+        )
+        AvailabilityPeriod.objects.create(
+            slot=slot,
+            start=dt(hour=6),
+            end=dt(hour=14),
+            user=syto_user(f"foo1{i}@bar.baz", groups=["stationary_worker"]),
+        )
+
+    response = api_client.delete(reverse("syto_api:slot-detail", args=[slot.day]))
+
+    assert response.status_code == 204
+    with pytest.raises(Slot.DoesNotExist):
+        Slot.objects.get(day=dt().date())
+
+
 @pytest.mark.parametrize(
     ("groups", "status"),
     [
