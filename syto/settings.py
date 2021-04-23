@@ -23,7 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # https://django-environ.readthedocs.io/en/latest/
 
 env = environ.Env(
-    DEBUG=(bool, False), STATIC_ROOT=(str, "static"), ALLOWED_HOSTS=(list, [])
+    DEBUG=(bool, False),
+    STATIC_ROOT=(str, "static"),
+    ALLOWED_HOSTS=(list, []),
+    EMAIL_HOST=(str, "localhost"),
+    EMAIL_PORT=(int, 25),
+    EMAIL_HOST_USER=(str, ""),
+    EMAIL_HOST_PASSWORD=(str, ""),
+    EMAIL_USE_TSL=(bool, False),
 )
 env.read_env(env.str("./", ".env"))
 
@@ -184,3 +191,14 @@ MANIFEST_LOADER = {
     "output_dir": BASE_DIR / "syto_panel" / "static" / "syto_panel",
     "loader": VuetifyLoader,
 }
+
+
+# Email settings
+# https://docs.djangoproject.com/en/3.1/ref/settings/#settings
+
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+DEFAULT_FROM_EMAIL = "no-reply@syto-panel"
