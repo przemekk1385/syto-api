@@ -359,7 +359,7 @@ testing = ["django", "django-configurations (>=2.0)"]
 name = "python-dateutil"
 version = "2.8.1"
 description = "Extensions to the standard Python datetime module"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 
@@ -394,7 +394,7 @@ python-versions = "*"
 name = "six"
 version = "1.15.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -467,7 +467,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "266e11791b2fafdf52019734f7613293cd8734206cdcd7659de8824b118a23a3"
+content-hash = "d822413de336de2eca66ec4ec09685d3e2989908365c31ad165c851b96aba664"
 
 [metadata.files]
 appdirs = [
